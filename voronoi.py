@@ -206,12 +206,13 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
             else:   #外心在線上
+                
                 if(which_side(x2,y2,x1,y1,x3,y3)>=0): #點在右上側(左下側)
-                    cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
-                else:   
                     cv.create_line(x,y,xb1,yb1)
                     edge.append((x,y,xb1,yb1))
+                else:   
+                    cv.create_line(x,y,xb2,yb2)
+                    edge.append((x,y,xb2,yb2))
 
 #(x1,y1)和(x2,y2)邊check字典編排序
 def check_and_SWAP(x1,y1,x2,y2):
