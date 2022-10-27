@@ -298,13 +298,16 @@ def draw_line():
 
     #邊輸入檔案
     global edge2
-    
+    edge3=[]
     f = open(path, 'a')
     for i in range(len(edge)):
-        edge2.append((check_and_SWAP(edge[i][0],edge[i][1],edge[i][2],edge[i][3])))
+        edge3.append((check_and_SWAP(edge[i][0],edge[i][1],edge[i][2],edge[i][3])))
+
+    edge2 = sorted(edge3,key = itemgetter(0,1,2,3))
+    for i in range(len(edge)):
         print(f"E {round(edge2[i][0])} {round(edge2[i][1])} {round(edge2[i][2])} {round(edge2[i][3])}", file=f)    
 
-    f.close()
+    f.close()    
     
     data_dot.clear()
     data_dot_sorted.clear()
@@ -356,8 +359,6 @@ def print_data():
             x1 , y1 = (x-2),(y-2)
             x2 , y2 = (x+2),(y+2)
             cv.create_oval(x1,y1,x2,y2,fill='red')
-    # if(len(data_dot)>=3):
-    #     draw_gravity(data_dot[0][0],data_dot[0][1],data_dot[1][0],data_dot[1][1],data_dot[2][0],data_dot[2][1])
     print("\n")
 
 
