@@ -295,7 +295,7 @@ def draw_line():
     f = open(path, 'w')
     for i in range(len(data_dot_sorted)):
         print(f"P {data_dot_sorted[i][0]} {data_dot_sorted[i][1]}", file=f)
-
+ 
     #邊輸入檔案
     global edge2
     edge3=[]
