@@ -10,7 +10,7 @@
 #     password = test2.get()
 #     print(password)
 
-# test = tk.Button(text="測試",command=show)
+# test = tk.Button(text="測試", command=show)
 # test.pack()
 
 # test2 = tk.Entry(show="*")
