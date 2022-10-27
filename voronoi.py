@@ -1,4 +1,4 @@
- #$LAN=python$  
+ #$LAN=python  $  
 
 from glob import glob
 import tkinter as tk
