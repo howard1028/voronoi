@@ -359,7 +359,6 @@ def read_data():
         x1 , y1 = (temp_P[i][0]-2),(temp_P[i][1]-2)
         x2 , y2 = (temp_P[i][0]+2),(temp_P[i][1]+2)
         cv.create_oval(x1,y1,x2,y2,fill='red')
-
     for i in range(0,len(temp_E),2):
         cv.create_line(temp_E[i][0],temp_E[i][1],temp_E[i+1][0],temp_E[i+1][1])
 
