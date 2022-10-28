@@ -324,13 +324,14 @@ def read_data():
     index=0
 
     file_path = filedialog.askopenfilename()
-
     file = open(file_path, "r", encoding='utf-8')
+
+    
+    #讀測資
     for line in file:
         b=line.strip()
         if (b.startswith("#") == False and len(b)!=0) :
             dot_list.append(b.split())
-    # print("dot_llist=\n",dot_list)
     
     for i in range(len(dot_list)):
         if (len(dot_list[i])==1):
@@ -338,6 +339,30 @@ def read_data():
         else:
             dot_list2.append((int(dot_list[i][0]),int(dot_list[i][1])))
     print("dot_list2=\n",dot_list2)
+
+    #讀output檔
+    temp_P=[]
+    temp_E=[]
+    temp_P.clear()
+    temp_E.clear()
+    for line in file:
+        c=line.strip()
+        if (c.startswith("P") == True) :
+            temp=c.split()
+            temp_P.append(((int(temp[1])),int(temp[2])))
+        elif(c.startswith("E") == True):
+            temp=c.split()
+            temp_E.append((int(temp[1]),int(temp[2])))
+            temp_E.append((int(temp[3]),int(temp[4])))
+    print("P:",temp_P)
+    print("E",temp_E)
+
+    for i in range(len(temp_P)):
+        x1 , y1 = (temp_P[i][0]-2),(temp_P[i][1]-2)
+        x2 , y2 = (temp_P[i][0]+2),(temp_P[i][1]+2)
+        cv.create_oval(x1,y1,x2,y2,fill='red')
+
+
     print("read successfully!\n")
     file.close()
         

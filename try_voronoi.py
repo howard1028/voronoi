@@ -91,23 +91,41 @@
 # print(edge)
 
 #(x1,y1)和(x2,y2)check字典編排序
-def check_and_SWAP(x1,y1,x2,y2):
-    if(x1>x2):
-        temp_x=x1
-        temp_y=y1
-        x1=x2
-        y1=y2
-        x2=temp_x
-        y2=temp_y
-    elif(x1==x2):
-        if(y1>y2):
-            temp_x=x1
-            temp_y=y1
-            x1=x2
-            y1=y2
-            x2=temp_x
-            y2=temp_y
-    return x1,y1,x2,y2
+# def check_and_SWAP(x1,y1,x2,y2):
+#     if(x1>x2):
+#         temp_x=x1
+#         temp_y=y1
+#         x1=x2
+#         y1=y2
+#         x2=temp_x
+#         y2=temp_y
+#     elif(x1==x2):
+#         if(y1>y2):
+#             temp_x=x1
+#             temp_y=y1
+#             x1=x2
+#             y1=y2
+#             x2=temp_x
+#             y2=temp_y
+#     return x1,y1,x2,y2
 
-a=5,2,3,4
-print(check_and_SWAP(5,2,3,4))
+# a=5,2,3,4
+# print(check_and_SWAP(5,2,3,4))
+
+from tkinter import filedialog
+file_path = filedialog.askopenfilename()
+
+temp_P=[]
+temp_E=[]
+file = open(file_path, "r", encoding='utf-8')
+for line in file:
+    c=line.strip()
+    if (c.startswith("P") == True) :
+        temp=c.split()
+        temp_P.append(((int(temp[1])),int(temp[2])))
+    elif(c.startswith("E") == True):
+        temp=c.split()
+        temp_E.append((int(temp[1]),int(temp[2])))
+        temp_E.append((int(temp[3]),int(temp[4])))
+print(temp_P)
+print(temp_E)
