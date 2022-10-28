@@ -326,42 +326,42 @@ def read_data():
     file_path = filedialog.askopenfilename()
     file = open(file_path, "r", encoding='utf-8')
 
-    
+    temp_P=[]
+    temp_E=[]
+    temp_P.clear()
+    temp_E.clear()
+
     #讀測資
     for line in file:
         b=line.strip()
         if (b.startswith("#") == False and len(b)!=0) :
-            dot_list.append(b.split())
-    
+            if (b.startswith("P") == True) :
+                temp=b.split()
+                temp_P.append(((int(temp[1])),int(temp[2])))
+            elif(b.startswith("E") == True):
+                temp=b.split()
+                temp_E.append((int(temp[1]),int(temp[2])))
+                temp_E.append((int(temp[3]),int(temp[4])))
+            else:
+                dot_list.append(b.split())
+    #印測資
     for i in range(len(dot_list)):
         if (len(dot_list[i])==1):
             dot_list2.append(int(dot_list[i][0]))
         else:
             dot_list2.append((int(dot_list[i][0]),int(dot_list[i][1])))
-    print("dot_list2=\n",dot_list2)
+    print("dot_list2=",dot_list2)
 
-    #讀output檔
-    temp_P=[]
-    temp_E=[]
-    temp_P.clear()
-    temp_E.clear()
-    for line in file:
-        c=line.strip()
-        if (c.startswith("P") == True) :
-            temp=c.split()
-            temp_P.append(((int(temp[1])),int(temp[2])))
-        elif(c.startswith("E") == True):
-            temp=c.split()
-            temp_E.append((int(temp[1]),int(temp[2])))
-            temp_E.append((int(temp[3]),int(temp[4])))
+    #印output檔
     print("P:",temp_P)
-    print("E",temp_E)
-
+    print("E:",temp_E)
     for i in range(len(temp_P)):
         x1 , y1 = (temp_P[i][0]-2),(temp_P[i][1]-2)
         x2 , y2 = (temp_P[i][0]+2),(temp_P[i][1]+2)
         cv.create_oval(x1,y1,x2,y2,fill='red')
 
+    for i in range(0,len(temp_E),2):
+        cv.create_line(temp_E[i][0],temp_E[i][1],temp_E[i+1][0],temp_E[i+1][1])
 
     print("read successfully!\n")
     file.close()
