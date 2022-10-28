@@ -140,7 +140,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
             else:   #外心在線上
-                if(which_side(x3,y3,x2,y2,x1,y1)>=0): #點在上側
+                if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
                     edge.append((x,y,xb1,yb1))
                 else:   
@@ -173,7 +173,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
             else:   #外心在線上
-                if(which_side(x3,y3,x1,y1,x2,y2)>=0): #點在上側(下側)
+                if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
                     edge.append((x,y,xb1,yb1))
                 else:   
@@ -207,7 +207,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     edge.append((x,y,xb2,yb2))
             else:   #外心在線上
                 
-                if(which_side(x2,y2,x1,y1,x3,y3)>=0): #點在右上側(左下側)
+                if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
                     edge.append((x,y,xb1,yb1))
                 else:   
