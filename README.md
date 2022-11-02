@@ -1,4 +1,4 @@
-# Voronoi diagram by M103040072
+# Voronoi diagram
 
 * 讀資料並印出外心及Voronoi diagram:\
 1.按"read data"\

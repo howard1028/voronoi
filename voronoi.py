@@ -1,4 +1,7 @@
- #$LAN=python  $  
+ # $LAN=python$ 
+ # M103040072 吳浩宇 Howard Wu
+ # https://github.com/howard1028/voronoi_diagram
+
 
 from glob import glob
 import tkinter as tk
