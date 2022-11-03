@@ -355,8 +355,8 @@ def read_data():
             else:
                 dot_list.append(b.split())
         #讀到0，後面都不要
-        # elif (b.startswith("0") == True) :
-        #     for i in range(file):
+        elif ((b.startswith("0") == True) and (len(b)==1)) :
+            break
                 
     #印測資
     for i in range(len(dot_list)):
