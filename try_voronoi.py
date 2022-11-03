@@ -129,3 +129,4 @@ for line in file:
         temp_E.append((int(temp[3]),int(temp[4])))
 print(temp_P)
 print(temp_E)
+

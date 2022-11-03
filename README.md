@@ -16,6 +16,6 @@
 2.選擇output檔案，直接印出P和E
 #
 * clear:清空畫布
-* run:印出Voronoi diagram及外心
+* run:印出畫布上的Voronoi diagram及外心
 * read data:選擇要讀取的資料
 * print data:印出一組測資

@@ -238,7 +238,7 @@ def check_and_SWAP(x1,y1,x2,y2):
 
 #畫重心
 def draw_gravity(x1,y1,x2,y2,x3,y3):
-    if(slope(x1,y1,x2,y2) != slope(x1,y1,x3,y3)): #斜率相同=>共線
+    if((slope(x1,y1,x2,y2) != slope(x1,y1,x3,y3)) and (slope(x1,y1,x2,y2) != slope(x2,y2,x3,y3)) and (slope(x3,y3,x2,y2) != slope(x1,y1,x3,y3))): #斜率相同=>共線
         if not((x1==x2 and x2==x3)or(y1==y2 and y2==y3)): #不三點共線才有重心
             A1,B1,C1=medLine(x1,y1,x2,y2)
             A2,B2,C2=medLine(x1,y1,x3,y3)
@@ -279,8 +279,15 @@ def draw_line():
         data_dot.clear()
         data_dot_sorted.clear()
         print("Pleae retry.\n")
+
     elif(len(data_dot_sorted)<=2): #兩點一條中垂線
-        draw_medLine(data_dot[0][0],data_dot[0][1],data_dot[1][0],data_dot[1][1])   
+        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])   
+
+    elif((data_dot_sorted[0][0],data_dot_sorted[0][1])==(data_dot_sorted[1][0],data_dot_sorted[1][1])): #三點排好後，前兩點在同一點，變兩點一條中垂線
+        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[2][0],data_dot_sorted[2][1])   
+
+    elif((data_dot_sorted[2][0],data_dot_sorted[2][1])==(data_dot_sorted[1][0],data_dot_sorted[1][1])): #三點排好後，後兩點在同一點，變兩點一條中垂線
+        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])   
 
     elif(slope(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1]) == slope(data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])): #斜率相同，中垂線只有兩條
         draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])    
@@ -347,6 +354,10 @@ def read_data():
                 temp_E.append((int(temp[3]),int(temp[4])))
             else:
                 dot_list.append(b.split())
+        #讀到0，後面都不要
+        # elif (b.startswith("0") == True) :
+        #     for i in range(file):
+                
     #印測資
     for i in range(len(dot_list)):
         if (len(dot_list[i])==1):
