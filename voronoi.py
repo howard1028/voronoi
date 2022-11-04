@@ -16,7 +16,7 @@ window.geometry('800x650')
 window.resizable(False, False)
 # window.iconbitmap('icon.ico')
 
-gravity=[] #重心
+gravity=[] #外心
 dot_list=[] 
 dot_list2=[] #資料點list型態
 index=0
@@ -111,11 +111,11 @@ def which_side(x1,y1,x2,y2,x3,y3):
 #三點畫中垂線2
 def draw_medLine2(x1,y1,x2,y2,x3,y3):
     if(slope(x1,y1,x2,y2) != slope(x1,y1,x3,y3)): #斜率相同=>共線
-        if not((x1==x2 and x2==x3)or(y1==y2 and y2==y3)): #不三點共線才有重心
+        if not((x1==x2 and x2==x3)or(y1==y2 and y2==y3)): #不三點共線才有外心
             A1,B1,C1=medLine(x3,y3,x2,y2)
             A2,B2,C2=medLine(x1,y1,x3,y3)
             A3,B3,C3=medLine(x1,y1,x2,y2)
-            x,y = intersection(A1,B1,C1,A2,B2,C2) #x,y:重心
+            x,y = intersection(A1,B1,C1,A2,B2,C2) #x,y:外心
 
 
             x_mid,y_mid=(x2+x3)/2,(y2+y3)/2 #中點
@@ -236,10 +236,10 @@ def check_and_SWAP(x1,y1,x2,y2):
             y2=temp_y
     return x1,y1,x2,y2
 
-#畫重心
+#畫外心
 def draw_gravity(x1,y1,x2,y2,x3,y3):
     if((slope(x1,y1,x2,y2) != slope(x1,y1,x3,y3)) and (slope(x1,y1,x2,y2) != slope(x2,y2,x3,y3)) and (slope(x3,y3,x2,y2) != slope(x1,y1,x3,y3))): #斜率相同=>共線
-        if not((x1==x2 and x2==x3)or(y1==y2 and y2==y3)): #不三點共線才有重心
+        if not((x1==x2 and x2==x3)or(y1==y2 and y2==y3)): #不三點共線才有外心
             A1,B1,C1=medLine(x1,y1,x2,y2)
             A2,B2,C2=medLine(x1,y1,x3,y3)
             x,y = intersection(A1,B1,C1,A2,B2,C2)
@@ -297,7 +297,7 @@ def draw_line():
         draw_medLine2(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])    
 
 
-    #畫重心  
+    #畫外心  
     if(len(data_dot)>2):
         draw_gravity(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])
 
