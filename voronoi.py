@@ -20,10 +20,12 @@ gravity=[] #外心
 dot_list=[] 
 dot_list2=[] #資料點list型態
 index=0
-data_dot=[] # 資料點暫存
+data_dot=[] #資料點暫存
 edge=[] #邊
 edge2=[]
-data_dot_sorted=[]
+data_dot_sorted=[] #排序過的資料點暫存
+point_left=[]
+point_right=[]
 
 
 #已知兩點求直線一般式
@@ -252,20 +254,23 @@ def clear():
     cv.delete("all")
     print("\n")
 
-    global data_dot_sorted
     data_dot_sorted.clear()
     data_dot.clear()
     edge.clear()
     edge2.clear()
+    point_left.clear()
+    point_right.clear()
 
 
 def click(event):
     x1 , y1 = (event.x-2),(event.y-2)
     x2 , y2 = (event.x+2),(event.y+2)
     cv.create_oval(x1,y1,x2,y2,fill='red')
-
+    
     global data_dot
     data_dot.append((event.x,event.y))
+    # global data_dot_sorted
+    # data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
 
     print(event.x,event.y)
 
@@ -274,28 +279,8 @@ def draw_line():
     global data_dot_sorted
     data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
         
-    if(len(data_dot_sorted)<2):    
-        cv.delete("all")
-        data_dot.clear()
-        data_dot_sorted.clear()
-        print("Pleae retry.\n")
-
-    elif(len(data_dot_sorted)<=2): #兩點一條中垂線
-        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])   
-
-    elif((data_dot_sorted[0][0],data_dot_sorted[0][1])==(data_dot_sorted[1][0],data_dot_sorted[1][1])): #三點排好後，前兩點在同一點，變兩點一條中垂線
-        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[2][0],data_dot_sorted[2][1])   
-
-    elif((data_dot_sorted[2][0],data_dot_sorted[2][1])==(data_dot_sorted[1][0],data_dot_sorted[1][1])): #三點排好後，後兩點在同一點，變兩點一條中垂線
-        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])   
-
-    elif(slope(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1]) == slope(data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])): #斜率相同，中垂線只有兩條
-        draw_medLine(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1])    
-        draw_medLine(data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])
-
-    else: #三角形三條中垂線
-        draw_medLine2(data_dot_sorted[0][0],data_dot_sorted[0][1],data_dot_sorted[1][0],data_dot_sorted[1][1],data_dot_sorted[2][0],data_dot_sorted[2][1])    
-
+    #畫線    
+    drawline2(data_dot_sorted)
 
     #畫外心  
     if(len(data_dot)>2):
@@ -325,6 +310,30 @@ def draw_line():
     edge.clear()
     edge2.clear()
 
+
+def drawline2(temp_list):
+
+    if(len(temp_list)<2):    
+        cv.delete("all")
+        data_dot.clear()
+        temp_list.clear()
+        print("Pleae retry.\n")
+
+    elif(len(temp_list)<=2): #兩點一條中垂線
+        draw_medLine(temp_list[0][0],temp_list[0][1],temp_list[1][0],temp_list[1][1])   
+
+    elif((temp_list[0][0],temp_list[0][1])==(temp_list[1][0],temp_list[1][1])): #三點排好後，前兩點在同一點，變兩點一條中垂線
+        draw_medLine(temp_list[0][0],temp_list[0][1],temp_list[2][0],temp_list[2][1])   
+
+    elif((temp_list[2][0],temp_list[2][1])==(temp_list[1][0],temp_list[1][1])): #三點排好後，後兩點在同一點，變兩點一條中垂線
+        draw_medLine(temp_list[0][0],temp_list[0][1],temp_list[1][0],temp_list[1][1])   
+
+    elif(slope(temp_list[0][0],temp_list[0][1],temp_list[1][0],temp_list[1][1]) == slope(temp_list[1][0],temp_list[1][1],temp_list[2][0],temp_list[2][1])): #斜率相同，中垂線只有兩條
+        draw_medLine(temp_list[0][0],temp_list[0][1],temp_list[1][0],temp_list[1][1])    
+        draw_medLine(temp_list[1][0],temp_list[1][1],temp_list[2][0],temp_list[2][1])
+
+    else: #三角形三條中垂線
+        draw_medLine2(temp_list[0][0],temp_list[0][1],temp_list[1][0],temp_list[1][1],temp_list[2][0],temp_list[2][1])        
         
 
 def read_data():
@@ -378,7 +387,8 @@ def read_data():
 
     print("read successfully!\n")
     file.close()
-        
+
+
     
 #整理資料
 def print_data():
@@ -399,6 +409,45 @@ def print_data():
             x2 , y2 = (x+2),(y+2)
             cv.create_oval(x1,y1,x2,y2,fill='red')
     print("\n")
+
+#step by step
+def next_step():
+    if (len(data_dot) <= 3):
+        draw_line()
+    else:
+        global data_dot_sorted
+        data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
+        
+        divide(data_dot_sorted)
+
+
+#divide成左右兩邊
+def divide(temp_list):
+    left_temp=[]
+    right_temp=[]
+    if(len(temp_list)>3):
+        for i in range(len(temp_list)):
+            if (i<len(temp_list)/2):
+                left_temp.append(temp_list[i])
+            else:
+                right_temp.append(temp_list[i])
+        mid_x=(left_temp[-1][0]+right_temp[0][0])/2
+        cv.create_line(mid_x,0,mid_x,600 , fill="red")
+
+    if(len(left_temp)>3):
+        divide(left_temp)
+    else:
+        drawline2(left_temp)
+
+    if(len(right_temp)>3):
+        divide(right_temp)    
+    else:
+        drawline2(right_temp)
+
+
+#一邊做voronoi diagram        
+def one_side(list):
+    pass
 
 
 
@@ -425,6 +474,10 @@ read_button.pack(side="left")
 #印檔案
 print_button = tk.Button(text="print data",command=print_data)
 print_button.pack(side="left")
+
+#下一步
+step_button = tk.Button(text="next step",command=next_step)
+step_button.pack(side="left")
 
 window.mainloop()
 
