@@ -417,7 +417,7 @@ def next_step():
     else:
         global data_dot_sorted
         data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
-        
+
         divide(data_dot_sorted)
 
 
@@ -464,7 +464,7 @@ clear_button.pack(side="left")
 cv.bind("<Button-1>" , click)
 
 #run按鈕
-run_button = tk.Button(text="run",command=draw_line)
+run_button = tk.Button(text="draw",command=draw_line)
 run_button.pack(side="left")
 
 #讀檔
