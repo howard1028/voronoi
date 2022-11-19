@@ -10,7 +10,7 @@ Use:
 class ConvexHull:
 	def __init__(self, points):
 		if not points:
-			self.points = [(random.randint(0,100),random.randint(0,100)) for i in range(50)]
+			self.points = [((random.randint(0,100),random.randint(0,100)) for i in range(50))]
 		else:
 			self.points = points
 		self.hull = self.compute_convex_hull()
@@ -36,5 +36,5 @@ class ConvexHull:
 				hull.pop(-2)
 		return hull
 
-h = ConvexHull()
+h = ConvexHull([(1,3),(2,2),(3,1)])
 print(h.hull)

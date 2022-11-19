@@ -9,6 +9,7 @@ from tkinter.constants import *
 from tkinter import filedialog
 import math
 from operator import itemgetter
+import random
 
 window = tk.Tk()
 window.title('Voronoi diagram')
@@ -26,6 +27,36 @@ edge2=[]
 data_dot_sorted=[] #排序過的資料點暫存
 point_left=[]
 point_right=[]
+
+
+class ConvexHull:
+	def __init__(self, points):
+		if not points:
+			self.points = [((random.randint(0,100),random.randint(0,100)) for i in range(50))]
+		else:
+			self.points = points
+		self.hull = self.compute_convex_hull()
+    
+	def get_cross_product(self,p1, p2, p3):
+		return ((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p2[1] - p1[1])*(p3[0] - p1[0]))
+
+	def get_slope(self,p1, p2):
+		if p1[0] == p2[0]:
+			return float('inf')
+		else:
+			return 1.0*(p1[1]-p2[1])/(p1[0]-p2[0])
+
+	def compute_convex_hull(self):
+		hull = []
+		self.points.sort(key=lambda x:[x[0],x[1]])
+		start = self.points.pop(0)
+		hull.append(start)
+		self.points.sort(key=lambda p: (self.get_slope(p,start), -p[1],p[0]))
+		for pt in self.points:
+			hull.append(pt)
+			while len(hull) > 2 and self.get_cross_product(hull[-3],hull[-2],hull[-1]) < 0:
+				hull.pop(-2)
+		return hull
 
 
 #已知兩點求直線一般式
@@ -310,7 +341,7 @@ def draw_line():
     edge.clear()
     edge2.clear()
 
-
+#畫中垂線
 def drawline2(temp_list):
 
     if(len(temp_list)<2):    
@@ -389,6 +420,13 @@ def read_data():
     file.close()
 
 
+def draw_Convexhull(temp_list):
+    h = ConvexHull(temp_list)
+    print(h.hull)
+    for i in range(len(h.hull)-1):
+        cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1])
+    cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1])
+
     
 #整理資料
 def print_data():
@@ -418,7 +456,8 @@ def next_step():
         global data_dot_sorted
         data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
 
-        divide(data_dot_sorted)
+        # divide(data_dot_sorted)
+        draw_Convexhull(data_dot_sorted)
 
 
 #divide成左右兩邊
@@ -478,6 +517,7 @@ print_button.pack(side="left")
 #下一步
 step_button = tk.Button(text="next step",command=next_step)
 step_button.pack(side="left")
+
 
 window.mainloop()
 
