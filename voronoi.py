@@ -25,8 +25,9 @@ data_dot=[] #資料點暫存
 edge=[] #邊
 edge2=[]
 data_dot_sorted=[] #排序過的資料點暫存
-point_left=[]
+point_left=[] #divide後左邊的點
 point_right=[]
+border=[] #divide後的邊界
 
 
 class ConvexHull:
@@ -420,12 +421,13 @@ def read_data():
     file.close()
 
 
+#畫convex hull
 def draw_Convexhull(temp_list):
     h = ConvexHull(temp_list)
     print(h.hull)
     for i in range(len(h.hull)-1):
-        cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1])
-    cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1])
+        cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1],fill="blue")
+    cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1],fill="blue")
 
     
 #整理資料
@@ -455,15 +457,16 @@ def next_step():
     else:
         global data_dot_sorted
         data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
-
-        # divide(data_dot_sorted)
-        draw_Convexhull(data_dot_sorted)
+        
+        divide(data_dot_sorted)
+        # draw_Convexhull(data_dot_sorted)
 
 
 #divide成左右兩邊
 def divide(temp_list):
     left_temp=[]
     right_temp=[]
+
     if(len(temp_list)>3):
         for i in range(len(temp_list)):
             if (i<len(temp_list)/2):
@@ -472,22 +475,25 @@ def divide(temp_list):
                 right_temp.append(temp_list[i])
         mid_x=(left_temp[-1][0]+right_temp[0][0])/2
         cv.create_line(mid_x,0,mid_x,600 , fill="red")
+        border.append((mid_x,0,mid_x,600))
+
+    continue_button.wait_variable(var) #wait
 
     if(len(left_temp)>3):
         divide(left_temp)
     else:
         drawline2(left_temp)
-
+        continue_button.wait_variable(var) #wait
+        draw_Convexhull(left_temp)
+        continue_button.wait_variable(var) #wait
+        
     if(len(right_temp)>3):
         divide(right_temp)    
     else:
         drawline2(right_temp)
-
-
-#一邊做voronoi diagram        
-def one_side(list):
-    pass
-
+        continue_button.wait_variable(var) #wait
+        draw_Convexhull(right_temp)
+        continue_button.wait_variable(var) #wait
 
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
@@ -514,11 +520,41 @@ read_button.pack(side="left")
 print_button = tk.Button(text="print data",command=print_data)
 print_button.pack(side="left")
 
-#下一步
-step_button = tk.Button(text="next step",command=next_step)
+#全部算完，再靠continue button下一步
+step_button = tk.Button(text="start",command=next_step)
 step_button.pack(side="left")
+
+
+#Step by step
+var = tk.IntVar()
+continue_button = tk.Button(window, text="Click Me for next step.", command=lambda: var.set(1))
+continue_button.pack(side="left")
+# print("1")
+# print("waiting...")
+# continue_button.wait_variable(var)
+# print("2")
+# print("done waiting.")
+
+# step=0
+# if(step==0):
+#     step_button = tk.Button(text="next step",command=next_step)
+#     step_button.pack(side="left") 
+# else:
+#     var = tk.IntVar()
+#     step_button = tk.Button(window, text="next step", command=lambda: var.set(1))
+#     step_button.pack(side="left")
 
 
 window.mainloop()
 
 
+############################################################################
+
+#Credit to:
+#https://www.itread01.com/articles/1476674425.html
+#https://lvngd.com/blog/convex-hull-graham-scan-algorithm-python/
+#https://krisonepiece.github.io/VoronoiDiagram/
+#https://stackoverflow.com/questions/44790449/making-tkinter-wait-untill-button-is-pressed
+#https://www.twblogs.net/a/5b7f92792b717767c6b03e55
+#https://web.ntnu.edu.tw/~algo/ConvexHull.html
+#https://blog.csdn.net/python1639er/article/details/115386039
