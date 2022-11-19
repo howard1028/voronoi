@@ -25,9 +25,9 @@ data_dot=[] #資料點暫存
 edge=[] #邊
 edge2=[]
 data_dot_sorted=[] #排序過的資料點暫存
-point_left=[] #divide後左邊的點
-point_right=[]
 border=[] #divide後的邊界
+left=[]
+right=[]
 
 
 class ConvexHull:
@@ -75,7 +75,7 @@ def medLine(x1,y1,x2,y2):
     C = x1**2-x2**2+y1**2-y2**2
     return A,B,C
 
-#求兩線交點
+#求兩線交點by四個點
 def GetIntersectPointofLines(x1,y1,x2,y2,x3,y3,x4,y4):
     A1,B1,C1 = GeneralEquation(x1,y1,x2,y2)
     A2,B2,C2 = GeneralEquation(x3,y3,x4,y4)
@@ -87,7 +87,7 @@ def GetIntersectPointofLines(x1,y1,x2,y2,x3,y3,x4,y4):
         y=(C1*A2-C2*A1)/m
     return x,y
 
-#兩線交點
+#兩線交點by方程式
 def intersection(A1,B1,C1,A2,B2,C2):
     x,y = (C2*B1-C1*B2)/(A1*B2-A2*B1),(C1*A2-C2*A1)/(A1*B2-A2*B1)
     return x,y
@@ -290,8 +290,11 @@ def clear():
     data_dot.clear()
     edge.clear()
     edge2.clear()
-    point_left.clear()
-    point_right.clear()
+    # left_temp.clear()
+    # right_temp.clear()
+    left.clear()
+    right.clear()
+
 
 
 def click(event):
@@ -424,7 +427,8 @@ def read_data():
 #畫convex hull
 def draw_Convexhull(temp_list):
     h = ConvexHull(temp_list)
-    print(h.hull)
+    print("Convex_hull=",h.hull)
+    print("\n")
     for i in range(len(h.hull)-1):
         cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1],fill="blue")
     cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1],fill="blue")
@@ -457,16 +461,19 @@ def next_step():
     else:
         global data_dot_sorted
         data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
-        
+
         divide(data_dot_sorted)
         # draw_Convexhull(data_dot_sorted)
+        merge(left+right)
 
 
 #divide成左右兩邊
 def divide(temp_list):
-    left_temp=[]
+    left_temp=[] 
     right_temp=[]
+    all=[] #記每次left+right
 
+    #畫中線
     if(len(temp_list)>3):
         for i in range(len(temp_list)):
             if (i<len(temp_list)/2):
@@ -484,6 +491,11 @@ def divide(temp_list):
     else:
         drawline2(left_temp)
         continue_button.wait_variable(var) #wait
+        for i in range(len(left_temp)):
+            left.append(left_temp[i])
+            all.append(left_temp[i])
+        print("left=",left)
+
         draw_Convexhull(left_temp)
         continue_button.wait_variable(var) #wait
         
@@ -492,9 +504,23 @@ def divide(temp_list):
     else:
         drawline2(right_temp)
         continue_button.wait_variable(var) #wait
+        for i in range(len(right_temp)):
+            right.append(right_temp[i])
+            all.append(right_temp[i])
+        print("right=",right)
+
         draw_Convexhull(right_temp)
         continue_button.wait_variable(var) #wait
+    
+    #merge剛divide的
+    if(len(all)>0):
+        merge(all)
+        all.clear()
+        continue_button.wait_variable(var) #wait
 
+
+def merge(temp_list):
+    draw_Convexhull(temp_list)
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
 cv.pack(anchor='nw')
