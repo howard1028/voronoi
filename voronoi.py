@@ -469,10 +469,14 @@ def next_step():
 
         divide(data_dot_sorted)
         # draw_Convexhull(data_dot_sorted)
+
         continue_button.wait_variable(var) #wait
         cv.delete("CH")
         draw_Convexhull(left+right)
 
+        continue_button.wait_variable(var) #wait
+        cv.delete("CH")
+        hyperplane(left,right)
 
 #divide成左右兩邊
 def divide(temp_list):
@@ -519,10 +523,9 @@ def divide(temp_list):
         draw_Convexhull(right_temp)
         continue_button.wait_variable(var) #wait
     
-    #merge剛divide的
+    #merge剛divide的convex hull
     if(len(all)>0):
         all_temp=[] #暫存all
-        all_prev=[]
         all_temp=all+all_temp
         draw_Convexhull(all)
         # all.clear()
@@ -530,8 +533,31 @@ def divide(temp_list):
         
         # for i in range(len())
         cv.delete("CH")
-
         draw_Convexhull(all_temp)
+        hyperplane(left,right)
+
+def hyperplane(list1,list2):
+    start=[]
+    start.clear()
+    temp=600
+    j=0
+    #找最上方兩點當hyperplane開始的邊
+    for i in range(len(list1)):
+        if(list1[i][1]<temp):
+            temp=list1[i][1]
+            j=i
+    start.append(list1[j])
+
+    temp=600
+    j=0
+    for i in range(len(list2)):
+        if(list2[i][1]<temp):
+            temp=list2[i][1]
+            j=i
+    start.append(list2[j])
+
+    print("start=",start)
+    cv.create_line(start[0][0],start[0][1],start[1][0],start[1][1], fill="red")
 
 
 # def merge(temp_list):
