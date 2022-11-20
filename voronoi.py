@@ -430,8 +430,13 @@ def draw_Convexhull(temp_list):
     print("Convex_hull=",h.hull)
     print("\n")
     for i in range(len(h.hull)-1):
-        cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1],fill="blue")
-    cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1],fill="blue")
+        cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1],fill="blue",tag="CH")
+    cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1],fill="blue",tag="CH")
+
+
+#清除convex hull
+def clear_Convexhull(temp_list):
+    pass
 
     
 #整理資料
@@ -464,7 +469,9 @@ def next_step():
 
         divide(data_dot_sorted)
         # draw_Convexhull(data_dot_sorted)
-        merge(left+right)
+        continue_button.wait_variable(var) #wait
+        cv.delete("CH")
+        draw_Convexhull(left+right)
 
 
 #divide成左右兩邊
@@ -481,8 +488,8 @@ def divide(temp_list):
             else:
                 right_temp.append(temp_list[i])
         mid_x=(left_temp[-1][0]+right_temp[0][0])/2
-        cv.create_line(mid_x,0,mid_x,600 , fill="red")
-        border.append((mid_x,0,mid_x,600))
+        # cv.create_line(mid_x,0,mid_x,600 , fill="red")
+        # border.append((mid_x,0,mid_x,600))
 
     continue_button.wait_variable(var) #wait
 
@@ -514,13 +521,21 @@ def divide(temp_list):
     
     #merge剛divide的
     if(len(all)>0):
-        merge(all)
-        all.clear()
+        all_temp=[] #暫存all
+        all_prev=[]
+        all_temp=all+all_temp
+        draw_Convexhull(all)
+        # all.clear()
         continue_button.wait_variable(var) #wait
+        
+        # for i in range(len())
+        cv.delete("CH")
+
+        draw_Convexhull(all_temp)
 
 
-def merge(temp_list):
-    draw_Convexhull(temp_list)
+# def merge(temp_list):
+#     draw_Convexhull(temp_list)
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
 cv.pack(anchor='nw')
