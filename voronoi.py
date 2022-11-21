@@ -38,6 +38,7 @@ class ConvexHull:
 			self.points = points
 		self.hull = self.compute_convex_hull()
     
+    #外積>0，順時針向右
 	def get_cross_product(self,p1, p2, p3):
 		return ((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p2[1] - p1[1])*(p3[0] - p1[0]))
 
@@ -55,7 +56,7 @@ class ConvexHull:
 		self.points.sort(key=lambda p: (self.get_slope(p,start), -p[1],p[0]))
 		for pt in self.points:
 			hull.append(pt)
-			while len(hull) > 2 and self.get_cross_product(hull[-3],hull[-2],hull[-1]) < 0:
+			while len(hull) > 2 and self.get_cross_product(hull[-3],hull[-2],hull[-1]) < 0: #外積<0，順時針向左
 				hull.pop(-2)
 		return hull
 
@@ -474,9 +475,9 @@ def next_step():
         cv.delete("CH")
         draw_Convexhull(left+right)
 
-        continue_button.wait_variable(var) #wait
-        cv.delete("CH")
-        hyperplane(left,right)
+        # continue_button.wait_variable(var) #wait
+        # cv.delete("CH")
+        # hyperplane(left,right)
 
 #divide成左右兩邊
 def divide(temp_list):
@@ -497,6 +498,7 @@ def divide(temp_list):
 
     continue_button.wait_variable(var) #wait
 
+    #左遞迴
     if(len(left_temp)>3):
         divide(left_temp)
     else:
@@ -510,6 +512,7 @@ def divide(temp_list):
         draw_Convexhull(left_temp)
         continue_button.wait_variable(var) #wait
         
+    #右遞迴
     if(len(right_temp)>3):
         divide(right_temp)    
     else:
@@ -557,7 +560,7 @@ def hyperplane(list1,list2):
     start.append(list2[j])
 
     print("start=",start)
-    cv.create_line(start[0][0],start[0][1],start[1][0],start[1][1], fill="red")
+    cv.create_line(start[0][0],start[0][1],start[1][0],start[1][1], fill="red",tag="CH")
 
 
 # def merge(temp_list):
