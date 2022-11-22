@@ -482,12 +482,12 @@ def next_step():
         (a,b)=find_uppercut(left,right)
         print("upper bound=",a,b)
 
-        (c,d)=find_lowercut(left,right)
-        print("lower bound=",a,b)
+        # (c,d)=find_lowercut(left,right)
+        # print("lower bound=",c,d)
 
         # draw_Convexhull(left+right)
         cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
-        cv.create_line(c[0],c[1],d[0],d[1],fill="red") 
+        # cv.create_line(c[0],c[1],d[0],d[1],fill="red") 
         hyperplane(a[0],a[1],b[0],b[1])
 
 
@@ -591,7 +591,7 @@ def find_uppercut(left_list,right_list):
 
     i=0
     while i<len(all):
-        if(all[i]!=l[i]):
+        if(all[i%len(all)]!=l[i%len(l)]):
             break
         else:
             i+=1
@@ -614,13 +614,19 @@ def find_lowercut(left_list,right_list):
         if r[i][0]>temp:
             temp=r[i][0]
             index=i
+    j=0
     for i in range(len(all)):
         if all[i]==r[index]:
-            if index==len(r)-1:
-                return (all[i],all[i+1])
-            else:
+            # if index%len(r)==len(r)-1:
+            #     return (all[i],all[i+1])
+            # else:
+            #     index+=1
+            j=i
+        for k in range(j,len(all),1):
+            if(r[index]==all[k]):
                 index+=1
-
+            else:
+                return (all[k-1],all[k])
 
                 
 
