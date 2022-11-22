@@ -23,11 +23,12 @@ dot_list2=[] #資料點list型態
 index=0
 data_dot=[] #資料點暫存
 edge=[] #邊
-edge2=[]
+edge2=[] #排序過的邊
 data_dot_sorted=[] #排序過的資料點暫存
 border=[] #divide後的邊界
-left=[]
-right=[]
+left=[] #divide後左邊點
+right=[] #divide後右邊點
+CH_edge=[]
 
 
 class ConvexHull:
@@ -37,8 +38,13 @@ class ConvexHull:
 		else:
 			self.points = points
 		self.hull = self.compute_convex_hull()
-    
-    #外積>0，順時針向右
+        
+        #紀錄convex hull邊
+		for i in range(len(self.hull)-1):
+			CH_edge.append((self.hull[i][0],self.hull[i][1],self.hull[i+1][0],self.hull[i+1][1]))
+		CH_edge.append((self.hull[0][0],self.hull[0][1],self.hull[-1][0],self.hull[-1][1]))
+
+    #外積>0，順時針向左
 	def get_cross_product(self,p1, p2, p3):
 		return ((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p2[1] - p1[1])*(p3[0] - p1[0]))
 
@@ -54,12 +60,13 @@ class ConvexHull:
 		start = self.points.pop(0)
 		hull.append(start)
 		self.points.sort(key=lambda p: (self.get_slope(p,start), -p[1],p[0]))
+
 		for pt in self.points:
 			hull.append(pt)
-			while len(hull) > 2 and self.get_cross_product(hull[-3],hull[-2],hull[-1]) < 0: #外積<0，順時針向左
+			while len(hull) > 2 and self.get_cross_product(hull[-3],hull[-2],hull[-1]) < 0: #外積<0，順時針向右
 				hull.pop(-2)
 		return hull
-
+    
 
 #已知兩點求直線一般式
 def GeneralEquation(x1,y1,x2,y2):
@@ -297,7 +304,6 @@ def clear():
     right.clear()
 
 
-
 def click(event):
     x1 , y1 = (event.x-2),(event.y-2)
     x2 , y2 = (event.x+2),(event.y+2)
@@ -427,19 +433,21 @@ def read_data():
 
 #畫convex hull
 def draw_Convexhull(temp_list):
+    CH_edge.clear()
+    
     h = ConvexHull(temp_list)
     print("Convex_hull=",h.hull)
-    print("\n")
     for i in range(len(h.hull)-1):
         cv.create_line(h.hull[i][0],h.hull[i][1],h.hull[i+1][0],h.hull[i+1][1],fill="blue",tag="CH")
     cv.create_line(h.hull[0][0],h.hull[0][1],h.hull[-1][0],h.hull[-1][1],fill="blue",tag="CH")
 
+    print("CH_edge=",CH_edge)
+    print("\n")
 
 #清除convex hull
 def clear_Convexhull(temp_list):
     pass
 
-    
 #整理資料
 def print_data():
     cv.delete("all")
@@ -466,24 +474,33 @@ def next_step():
         draw_line()
     else:
         global data_dot_sorted
+        global left
+        global right
         data_dot_sorted = sorted(data_dot,key = itemgetter(0,1))
 
         divide(data_dot_sorted)
         # draw_Convexhull(data_dot_sorted)
-
+        print("left=",left)
         continue_button.wait_variable(var) #wait
-        cv.delete("CH")
-        draw_Convexhull(left+right)
 
-        # continue_button.wait_variable(var) #wait
         # cv.delete("CH")
-        # hyperplane(left,right)
+        (a,b)=find_uppercut(left,right)
+        print("upper bound=",a,b)
+
+        # draw_Convexhull(left+right)
+        cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
+        hyperplane(a[0],a[1],b[0],b[1])
+
+
+
 
 #divide成左右兩邊
 def divide(temp_list):
     left_temp=[] 
     right_temp=[]
     all=[] #記每次left+right
+    global left
+    global right
 
     #畫中線
     if(len(temp_list)>3):
@@ -497,33 +514,48 @@ def divide(temp_list):
         # border.append((mid_x,0,mid_x,600))
 
     continue_button.wait_variable(var) #wait
+    
 
     #左遞迴
     if(len(left_temp)>3):
         divide(left_temp)
     else:
         drawline2(left_temp)
-        continue_button.wait_variable(var) #wait
-        for i in range(len(left_temp)):
-            left.append(left_temp[i])
-            all.append(left_temp[i])
-        print("left=",left)
+        l=ConvexHull(left_temp)
+        left_t=l.hull
 
-        draw_Convexhull(left_temp)
+        continue_button.wait_variable(var) #wait
+        for i in range(len(left_t)):
+            # left.append(left_temp[i])
+            all.append(left_t[i])
+        print("left=",left_t)
+
+        left=left_t
+        left.append(left_t[0])
+        # for i in range(len(left_t)):
+        #     left.append(left_t[0])
+        draw_Convexhull(left_t)
+        
         continue_button.wait_variable(var) #wait
         
     #右遞迴
-    if(len(right_temp)>3):
+    if(len(right_temp)>3):  
         divide(right_temp)    
     else:
         drawline2(right_temp)
-        continue_button.wait_variable(var) #wait
-        for i in range(len(right_temp)):
-            right.append(right_temp[i])
-            all.append(right_temp[i])
-        print("right=",right)
+        r=ConvexHull(right_temp)
+        right_t=r.hull
 
-        draw_Convexhull(right_temp)
+        continue_button.wait_variable(var) #wait
+        for i in range(len(right_t)):
+            # right.append(right_temp[i])
+            all.append(right_t[i])
+        print("right=",right_t)
+        
+        right=right_t
+        right.append(right_t[0])
+
+        draw_Convexhull(right_t)
         continue_button.wait_variable(var) #wait
     
     #merge剛divide的convex hull
@@ -537,34 +569,58 @@ def divide(temp_list):
         # for i in range(len())
         cv.delete("CH")
         draw_Convexhull(all_temp)
-        hyperplane(left,right)
-
-def hyperplane(list1,list2):
-    start=[]
-    start.clear()
-    temp=600
-    j=0
-    #找最上方兩點當hyperplane開始的邊
-    for i in range(len(list1)):
-        if(list1[i][1]<temp):
-            temp=list1[i][1]
-            j=i
-    start.append(list1[j])
-
-    temp=600
-    j=0
-    for i in range(len(list2)):
-        if(list2[i][1]<temp):
-            temp=list2[i][1]
-            j=i
-    start.append(list2[j])
-
-    print("start=",start)
-    cv.create_line(start[0][0],start[0][1],start[1][0],start[1][1], fill="red",tag="CH")
+        # hyperplane(left,right)
 
 
-# def merge(temp_list):
-#     draw_Convexhull(temp_list)
+#外積>0，順時針向左
+def get_cross_product(p1, p2, p3):
+    return ((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p2[1] - p1[1])*(p3[0] - p1[0]))
+
+
+#找上切線
+def find_uppercut(left_list,right_list):
+    l_temp=ConvexHull(left_list)
+    l=l_temp.hull
+    r_temp=ConvexHull(right_list)
+    r=r_temp.hull
+    all_temp=ConvexHull(l+r)
+    all=all_temp.hull
+
+    print("l=",l)
+    print("r=",r)
+    print("all=",all)
+
+    i=0
+    while i<len(all):
+        if(all[i]!=l[i]):
+            break
+        else:
+            i+=1
+    return (all[i-1],all[i])
+
+
+def hyperplane(x1,y1,x2,y2):
+    edge_equation=[]
+    edge_intersection=[]
+    A,B,C=medLine(x1,y1,x2,y2) #上切線的垂直線一般式
+
+    print("edge=",edge)
+
+    #存edge方程式
+    for i in range(len(edge)):
+        A1,B1,C1=GeneralEquation(edge[i][0],edge[i][1],edge[i][2],edge[i][3])
+        edge_equation.append((A1,B1,C1))
+    print("edge equation=",edge_equation)
+
+    #存edge交點
+    for i in range(len(edge)):
+        x,y=intersection(A,B,C,edge_equation[i][0],edge_equation[i][1],edge_equation[i][2])
+        edge_intersection.append((x,y))
+    print("edge intersection=",edge_intersection)
+    
+
+
+
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
 cv.pack(anchor='nw')

@@ -40,9 +40,33 @@
 # print(h.hull)
 
 
-list1=[(1,1),(2,2)]
-list2=[(3,3),(4,4)]
-list=list1+list2
-# list.append(list1)
-# list.append(list2)
-print(list)
+# list1=[(1,1),(2,2)]
+# list2=[(3,3),(4,4)]
+# list=list1+list2
+# # list.append(list1)
+# # list.append(list2)
+# print(list)
+
+# left=(0,1)
+# a=(2,4)
+# left=a
+# print(left)
+
+# a=[(1,3),(2,2),(3,1)]
+# for i in a:
+#     print(i)
+
+
+# a=[1,2,3,4,5,6]
+# for i in range(3,len(a)):
+#     print(i)
+
+# a=[]
+# a.append((1,2,3,4))
+# a.append((5,6,7,8))
+# print(a)
+
+
+start= [(195, 221), (423, 228)]
+l= [(206, 373), (195, 221), (82, 367)]
+print(start+l)
