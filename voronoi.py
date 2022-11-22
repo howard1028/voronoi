@@ -444,10 +444,6 @@ def draw_Convexhull(temp_list):
     print("CH_edge=",CH_edge)
     print("\n")
 
-#清除convex hull
-def clear_Convexhull(temp_list):
-    pass
-
 #整理資料
 def print_data():
     cv.delete("all")
@@ -480,15 +476,18 @@ def next_step():
 
         divide(data_dot_sorted)
         # draw_Convexhull(data_dot_sorted)
-        print("left=",left)
         continue_button.wait_variable(var) #wait
 
         # cv.delete("CH")
         (a,b)=find_uppercut(left,right)
         print("upper bound=",a,b)
 
+        (c,d)=find_lowercut(left,right)
+        print("lower bound=",a,b)
+
         # draw_Convexhull(left+right)
         cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
+        cv.create_line(c[0],c[1],d[0],d[1],fill="red") 
         hyperplane(a[0],a[1],b[0],b[1])
 
 
@@ -597,6 +596,34 @@ def find_uppercut(left_list,right_list):
         else:
             i+=1
     return (all[i-1],all[i])
+
+
+#找下切線
+def find_lowercut(left_list,right_list):
+    l_temp=ConvexHull(left_list)
+    l=l_temp.hull
+    r_temp=ConvexHull(right_list)
+    r=r_temp.hull
+    all_temp=ConvexHull(l+r)
+    all=all_temp.hull
+
+
+    temp=0
+    index=0
+    for i in range(len(r)):
+        if r[i][0]>temp:
+            temp=r[i][0]
+            index=i
+    for i in range(len(all)):
+        if all[i]==r[index]:
+            if index==len(r)-1:
+                return (all[i],all[i+1])
+            else:
+                index+=1
+
+
+                
+
 
 
 def hyperplane(x1,y1,x2,y2):
