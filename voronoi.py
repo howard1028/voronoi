@@ -22,9 +22,9 @@ dot_list=[]
 dot_list2=[] #資料點list型態
 index=0
 data_dot=[] #資料點暫存
-edge=[] #voronoi diagram邊
+edge=[] #voronoi diagram邊 (前4:邊，後4:兩個點)
 edge2=[] #排序過的邊
-e_point=[] #形成voronoi diagram邊對應的點
+# e_point=[] #形成voronoi diagram邊對應的點
 data_dot_sorted=[] #排序過的資料點暫存
 border=[] #divide後的邊界
 left=[] #divide後左邊點
@@ -121,7 +121,7 @@ def draw_medLine(x1,y1,x2,y2):
         A2,B2,C2=0,1,0
         xb2,yb2 = intersection(A1,B1,C1,A2,B2,C2)
         cv.create_line(x_mid,y_mid,xb2,yb2)
-        edge.append((xb1,yb1,xb2,yb2))
+        edge.append((xb1,yb1,xb2,yb2,x1,y1,x2,y2))
 
     elif ((x1>x2 and y1<y2) or (x1<x2 and y1>y2)): #左下右上
         A1,B1,C1=medLine(x1,y1,x2,y2)
@@ -132,21 +132,20 @@ def draw_medLine(x1,y1,x2,y2):
         A2,B2,C2=0,1,-600
         xb2,yb2 = intersection(A1,B1,C1,A2,B2,C2)
         cv.create_line(x_mid,y_mid,xb2,yb2)
-        edge.append((xb1,yb1,xb2,yb2))
+        edge.append((xb1,yb1,xb2,yb2,x1,y1,x2,y2))
 
     elif ((x1>x2 and y1==y2) or (x1<x2 and y1==y2)): #同一橫線
 
         cv.create_line(x_mid,y_mid,x_mid,0)
         cv.create_line(x_mid,y_mid,x_mid,600)
-        edge.append((x_mid,0,x_mid,600))
+        edge.append((x_mid,0,x_mid,600,x1,y1,x2,y2))
 
     elif ((x1==x2 and y1>y2) or (x1==x2 and y1<y2)): #同一直線
 
         cv.create_line(x_mid,y_mid,0,y_mid)
         cv.create_line(x_mid,y_mid,600,y_mid)
-        edge.append((0,y_mid,600,y_mid))
+        edge.append((0,y_mid,600,y_mid,x1,y1,x2,y2))
 
-    e_point.append((x1,y1,x2,y2))
 
 #(x3,y3)如果在(x1,y1)和(x2,y2)的連線上方(圖下方)則>0
 def which_side(x1,y1,x2,y2,x3,y3): 
@@ -176,25 +175,24 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
                 else:   
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
             else:   #外心在線上
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
-            e_point.append((x2,y2,x3,y3))
+                    edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
 
 
 
@@ -211,25 +209,24 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
                 else:   
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
             else:   #外心在線上
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
-            e_point.append((x1,y1,x3,y3))
+                    edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
 
 
 
@@ -246,26 +243,25 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
                 else:   
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
+                    edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
             else:   #外心在線上
                 
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
                     cv.create_line(x,y,xb1,yb1)
-                    edge.append((x,y,xb1,yb1))
+                    edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
                 else:   
                     cv.create_line(x,y,xb2,yb2)
-                    edge.append((x,y,xb2,yb2))
-            e_point.append((x1,y1,x2,y2))
+                    edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
 
 
 #(x1,y1)和(x2,y2)邊check字典編排序
@@ -307,7 +303,6 @@ def clear():
     data_dot.clear()
     edge.clear()
     edge2.clear()
-    e_point.clear()
     # left_temp.clear()
     # right_temp.clear()
     left.clear()
@@ -361,7 +356,6 @@ def draw_line():
     data_dot_sorted.clear()
     edge.clear()
     edge2.clear()
-    e_point.clear()
 
 #畫中垂線
 def drawline2(temp_list):
@@ -661,19 +655,21 @@ def clockwise(p0, p1, p2):
 def hyperplane(x1,y1,x2,y2):
     edge_equation=[]
     edge_equation.clear()
-    edge_intersection=[]
-    edge_intersection.clear() #存有交到的
-    edge_inter2=[] #存全部交點
+    edge_intersection=[] #存有交到的
+    edge_intersection.clear() 
+    edge_inter2=[] #存一次全部交點
     edge_inter2.clear()
+    edge_inter3=[] #存全部交點
+    # edge_inter3.clear()
     to_print=[]
 
     A,B,C=medLine(x1,y1,x2,y2) #上切線的垂直線一般式
     xi,yi=intersection(A,B,C,0,1,0) #和邊界的交點
 
-    for i in range(len(e_point)):
-        check_and_SWAP(e_point)
-    print("edge=",edge)
-    print("e_point=",e_point)
+    # for i in range(len(e_point)):
+    #     check_and_SWAP(e_point[i][0],e_point[i][1],e_point[i][2],e_point[i][3])
+    # print("edge=",edge)
+
     #存edge方程式
     for i in range(len(edge)):
         A1,B1,C1=GeneralEquation(edge[i][0],edge[i][1],edge[i][2],edge[i][3])
@@ -691,17 +687,83 @@ def hyperplane(x1,y1,x2,y2):
     #印出第一條hyperplane
     index=0
     temp=600
+    #找最上面交點的
     for i in range(len(edge_intersection)):
         if edge_intersection[i][1]>0 and edge_intersection[i][1]<temp:
             temp=edge_intersection[i][1]
             index=i
     # print((xi,yi),(edge_intersection[index][0],edge_intersection[index][1]))
-    cv.create_line(xi,yi,edge_intersection[index][0],edge_intersection[index][1],fill="green")
+    p1x,p1y,p2x,p2y = xi,yi,edge_intersection[index][0],edge_intersection[index][1]
+    cv.create_line(p1x,p1y,p2x,p2y,fill="green")
+    edge_inter3.append((xi,yi))
+    edge_inter3.append((edge_intersection[index][0],edge_intersection[index][1]))
 
-    p1x,p1y=xi,yi
-    p2x,p2y=edge_intersection[index][0],edge_intersection[index][1]
+
+    # print("(x1,y1,x2,y2)=",(x1,y1,x2,y2))
+    # print("epoint eid2=",(edge[index][4],edge[index][5],edge[index][6],edge[index][7]))
+
+    # #new_e:下一個要畫中垂線的兩點
+    if edge[index][4]==x1 and edge[index][5]==y1:
+        new_e=(x2,y2,edge[index][6],edge[index][7])
+    elif edge[index][4]==x2 and edge[index][5]==y2:
+        new_e=(x1,y1,edge[index][6],edge[index][7])
+    elif edge[index][6]==x1 and edge[index][7]==y1:
+        new_e=(x2,y2,edge[index][4],edge[index][5])
+    elif edge[index][6]==x2 and edge[index][7]==y2:
+        new_e=(x1,y1,edge[index][4],edge[index][5])
+        
+    A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
+
+
+
+
+
+    edge_equation.clear()
+    edge_intersection.clear() 
+    edge_inter2.clear()
+
+    #存edge方程式
+    for i in range(len(edge)):
+        A1,B1,C1=GeneralEquation(edge[i][0],edge[i][1],edge[i][2],edge[i][3])
+        edge_equation.append((A1,B1,C1))
+    #存edge交點，並判斷是在線段上還是線段延伸上
+    for i in range(len(edge)):
+        x,y=intersection(A,B,C,edge_equation[i][0],edge_equation[i][1],edge_equation[i][2])
+        edge_inter2.append((x,y))
+        if (x-edge[i][0])*(x-edge[i][2])<0 and (y-edge[i][1])*(y-edge[i][3])<0: #邊的兩點和交點是反向，則真的有交到
+            edge_intersection.append((x,y))
+    #印出第一條hyperplane
+    index=0
+    temp=600
+    #找最上面交點的
+    for i in range(len(edge_intersection)):
+        if edge_intersection[i][1]>p2y and edge_intersection[i][1]<temp:
+            temp=edge_intersection[i][1]
+            index=i
     
+    p1x,p1y,p2x,p2y = p2x,p2y,edge_intersection[index][0],edge_intersection[index][1]
+    cv.create_line(p1x,p1y,p2x,p2y,fill="green")
+    edge_inter3.append((edge_intersection[index][0],edge_intersection[index][1]))
     
+
+    # print("edge_inter3",edge_inter3)
+
+        # #new_e:下一個要畫中垂線的兩點
+    # if edge[index][4]==x1 and edge[index][5]==y1:
+    #     new_e=(x2,y2,edge[index][6],edge[index][7])
+    # elif edge[index][4]==x2 and edge[index][5]==y2:
+    #     new_e=(x1,y1,edge[index][6],edge[index][7])
+    # elif edge[index][6]==x1 and edge[index][7]==y1:
+    #     new_e=(x2,y2,edge[index][4],edge[index][5])
+    # elif edge[index][6]==x2 and edge[index][7]==y2:
+    #     new_e=(x1,y1,edge[index][4],edge[index][5])
+        
+    # A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
+
+    
+    for i in range(len(edge_inter3)-1):
+        print("edge_inter3=",edge_inter3)
+        cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="green")
 
 
     
