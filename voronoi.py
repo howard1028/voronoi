@@ -478,17 +478,25 @@ def next_step():
         # draw_Convexhull(data_dot_sorted)
         continue_button.wait_variable(var) #wait
 
+        UL,UR,DL,DR=tangent_line(left,right)
+        cv.create_line(UL[0],UL[1],UR[0],UR[1],fill="red") 
+        print("upperbound=",UL[0],UL[1],UR[0],UR[1])
+        cv.create_line(DL[0],DL[1],DR[0],DR[1],fill="red") 
+        print("lowerbound=",DL[0],DL[1],DR[0],DR[1])
+
         # cv.delete("CH")
-        (a,b)=find_uppercut(left,right)
-        print("upper bound=",a,b)
+        # (a,b)=find_uppercut(left,right)
+        # print("upper bound=",a,b)
 
         # (c,d)=find_lowercut(left,right)
         # print("lower bound=",c,d)
 
+
+
         # draw_Convexhull(left+right)
-        cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
+        # cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
         # cv.create_line(c[0],c[1],d[0],d[1],fill="red") 
-        hyperplane(a[0],a[1],b[0],b[1])
+        # hyperplane(a[0],a[1],b[0],b[1])
 
 
 
@@ -576,60 +584,76 @@ def get_cross_product(p1, p2, p3):
     return ((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p2[1] - p1[1])*(p3[0] - p1[0]))
 
 
-#找上切線
-def find_uppercut(left_list,right_list):
-    l_temp=ConvexHull(left_list)
-    l=l_temp.hull
-    r_temp=ConvexHull(right_list)
-    r=r_temp.hull
-    all_temp=ConvexHull(l+r)
-    all=all_temp.hull
-
-    print("l=",l)
-    print("r=",r)
-    print("all=",all)
-
-    i=0
-    while i<len(all):
-        if(all[i%len(all)]!=l[i%len(l)]):
-            break
-        else:
-            i+=1
-    return (all[i-1],all[i])
-
-
-#找下切線
-def find_lowercut(left_list,right_list):
-    l_temp=ConvexHull(left_list)
-    l=l_temp.hull
-    r_temp=ConvexHull(right_list)
-    r=r_temp.hull
-    all_temp=ConvexHull(l+r)
-    all=all_temp.hull
-
-
-    temp=0
-    index=0
-    for i in range(len(r)):
-        if r[i][0]>temp:
-            temp=r[i][0]
-            index=i
-    j=0
-    for i in range(len(all)):
-        if all[i]==r[index]:
-            # if index%len(r)==len(r)-1:
-            #     return (all[i],all[i+1])
-            # else:
-            #     index+=1
-            j=i
-        for k in range(j,len(all),1):
-            if(r[index]==all[k]):
-                index+=1
+#找convex hull的切線
+def tangent_line(c_list_L, c_list_R):
+    L = len(c_list_L)
+    R = len(c_list_R)
+    #找最左集合最靠右和右集合最靠左的點
+    index_L = 0
+    value = c_list_L[0][0]
+    for i in range(L):
+        if c_list_L[i][0] > value:
+            index_L = i
+            value = c_list_L[i][0]
+    index_R = 0
+    value = c_list_R[0][0]
+    for j in range(R):
+        if c_list_R[j][0] < value:
+            index_R = j
+            value = c_list_R[j][0]
+    
+    #找切線
+    UL = index_L
+    DL = index_L
+    UR = index_R
+    DR = index_R
+    while True:
+        i = UL
+        j = UR
+        while True:
+            if clockwise(c_list_L[UL], c_list_R[UR%R], c_list_R[(UR+1)%R]) < 0:
+                UR+=1
             else:
-                return (all[k-1],all[k])
+                UR = UR%R
+                break
+        while True:
+            if clockwise(c_list_R[UR], c_list_L[UL%L], c_list_L[(UL-1)%L]) > 0:
+                UL-=1
+            else:
+                UL = UL%L
+                break
+        if UL==i and UR==j:
+            break
+    while True:
+        i = DL
+        j = DR
+        while True:
+            if clockwise(c_list_L[DL], c_list_R[DR%R], c_list_R[(DR-1)%R]) > 0:
+                DR-=1
+            else:
+                DR = DR%R
+                break
+        while True:
+            if clockwise(c_list_R[DR], c_list_L[DL%L], c_list_L[(DL+1)%L]) < 0:
+                DL+=1
+            else:
+                DL = DL%L
+                break
+        if DL==i and DR==j:
+            break
+
+    return c_list_L[UL], c_list_R[UR], c_list_L[DL], c_list_R[DR] #上左點，上右點，下左點，下右點
+    
 
                 
-
+def clockwise(p0, p1, p2):
+    cp = get_cross_product(p0,p1,p2)
+    if cp > 0:
+        return 1 #畫布上順時針轉(其實真正逆時針轉)
+    elif cp < 0:
+        return -1
+    else:
+        return 0
 
 
 def hyperplane(x1,y1,x2,y2):
