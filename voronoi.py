@@ -22,8 +22,9 @@ dot_list=[]
 dot_list2=[] #資料點list型態
 index=0
 data_dot=[] #資料點暫存
-edge=[] #邊
+edge=[] #voronoi diagram邊
 edge2=[] #排序過的邊
+e_point=[] #形成voronoi diagram邊對應的點
 data_dot_sorted=[] #排序過的資料點暫存
 border=[] #divide後的邊界
 left=[] #divide後左邊點
@@ -145,6 +146,8 @@ def draw_medLine(x1,y1,x2,y2):
         cv.create_line(x_mid,y_mid,600,y_mid)
         edge.append((0,y_mid,600,y_mid))
 
+    e_point.append((x1,y1,x2,y2))
+
 #(x3,y3)如果在(x1,y1)和(x2,y2)的連線上方(圖下方)則>0
 def which_side(x1,y1,x2,y2,x3,y3): 
     A,B,C=GeneralEquation(x1,y1,x2,y2)
@@ -191,6 +194,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                 else:   
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
+            e_point.append((x2,y2,x3,y3))
 
 
 
@@ -210,6 +214,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     edge.append((x,y,xb2,yb2))
                 else:   
                     cv.create_line(x,y,xb1,yb1)
+                    edge.append((x,y,xb1,yb1))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb1,yb1)
@@ -224,6 +229,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                 else:   
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
+            e_point.append((x1,y1,x3,y3))
 
 
 
@@ -243,6 +249,7 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                     edge.append((x,y,xb2,yb2))
                 else:   
                     cv.create_line(x,y,xb1,yb1)
+                    edge.append((x,y,xb1,yb1))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,x,y)>0): #外心和點在同一側
                     cv.create_line(x,y,xb1,yb1)
@@ -258,6 +265,8 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
                 else:   
                     cv.create_line(x,y,xb2,yb2)
                     edge.append((x,y,xb2,yb2))
+            e_point.append((x1,y1,x2,y2))
+
 
 #(x1,y1)和(x2,y2)邊check字典編排序
 def check_and_SWAP(x1,y1,x2,y2):
@@ -298,6 +307,7 @@ def clear():
     data_dot.clear()
     edge.clear()
     edge2.clear()
+    e_point.clear()
     # left_temp.clear()
     # right_temp.clear()
     left.clear()
@@ -351,6 +361,7 @@ def draw_line():
     data_dot_sorted.clear()
     edge.clear()
     edge2.clear()
+    e_point.clear()
 
 #畫中垂線
 def drawline2(temp_list):
@@ -480,23 +491,12 @@ def next_step():
 
         UL,UR,DL,DR=tangent_line(left,right)
         cv.create_line(UL[0],UL[1],UR[0],UR[1],fill="red") 
-        print("upperbound=",UL[0],UL[1],UR[0],UR[1])
+        print("upperbound=",UL,UR)
         cv.create_line(DL[0],DL[1],DR[0],DR[1],fill="red") 
-        print("lowerbound=",DL[0],DL[1],DR[0],DR[1])
-
-        # cv.delete("CH")
-        # (a,b)=find_uppercut(left,right)
-        # print("upper bound=",a,b)
-
-        # (c,d)=find_lowercut(left,right)
-        # print("lower bound=",c,d)
-
-
+        print("lowerbound=",DL,DR)
 
         # draw_Convexhull(left+right)
-        # cv.create_line(a[0],a[1],b[0],b[1],fill="red") #找上切線後開始找hyperplane
-        # cv.create_line(c[0],c[1],d[0],d[1],fill="red") 
-        # hyperplane(a[0],a[1],b[0],b[1])
+        hyperplane(UL[0],UL[1],UR[0],UR[1])
 
 
 
@@ -588,20 +588,23 @@ def get_cross_product(p1, p2, p3):
 def tangent_line(c_list_L, c_list_R):
     L = len(c_list_L)
     R = len(c_list_R)
-    #找最左集合最靠右和右集合最靠左的點
+
+    # 找最左集合最靠右和右集合最靠左的點
     index_L = 0
-    value = c_list_L[0][0]
     for i in range(L):
-        if c_list_L[i][0] > value:
+        if c_list_L[i][0] > c_list_L[index_L][0]:
             index_L = i
-            value = c_list_L[i][0]
+        elif c_list_L[i][0] == c_list_L[index_L][0]:
+            if c_list_L[i][1] > c_list_L[index_L][1]:
+                index_L = i
     index_R = 0
-    value = c_list_R[0][0]
     for j in range(R):
-        if c_list_R[j][0] < value:
+        if c_list_R[j][0] < c_list_R[index_R][0]:
             index_R = j
-            value = c_list_R[j][0]
-    
+        elif c_list_R[j][0] == c_list_R[index_R][0]:
+            if c_list_R[j][1] < c_list_R[index_R][1]:
+                index_R = j
+
     #找切線
     UL = index_L
     DL = index_L
@@ -643,13 +646,12 @@ def tangent_line(c_list_L, c_list_R):
             break
 
     return c_list_L[UL], c_list_R[UR], c_list_L[DL], c_list_R[DR] #上左點，上右點，下左點，下右點
-    
 
-                
+#畫布上順時針轉(其實真正逆時針轉)=1      
 def clockwise(p0, p1, p2):
     cp = get_cross_product(p0,p1,p2)
     if cp > 0:
-        return 1 #畫布上順時針轉(其實真正逆時針轉)
+        return 1 
     elif cp < 0:
         return -1
     else:
@@ -658,35 +660,59 @@ def clockwise(p0, p1, p2):
 
 def hyperplane(x1,y1,x2,y2):
     edge_equation=[]
+    edge_equation.clear()
     edge_intersection=[]
+    edge_intersection.clear() #存有交到的
+    edge_inter2=[] #存全部交點
+    edge_inter2.clear()
+    to_print=[]
+
     A,B,C=medLine(x1,y1,x2,y2) #上切線的垂直線一般式
+    xi,yi=intersection(A,B,C,0,1,0) #和邊界的交點
 
+    for i in range(len(e_point)):
+        check_and_SWAP(e_point)
     print("edge=",edge)
-
+    print("e_point=",e_point)
     #存edge方程式
     for i in range(len(edge)):
         A1,B1,C1=GeneralEquation(edge[i][0],edge[i][1],edge[i][2],edge[i][3])
         edge_equation.append((A1,B1,C1))
-    print("edge equation=",edge_equation)
+    # print("edge equation=",edge_equation)
 
-    #存edge交點
+    #存edge交點，並判斷是在線段上還是線段延伸上
     for i in range(len(edge)):
         x,y=intersection(A,B,C,edge_equation[i][0],edge_equation[i][1],edge_equation[i][2])
-        edge_intersection.append((x,y))
-    print("edge intersection=",edge_intersection)
+        edge_inter2.append((x,y))
+        if (x-edge[i][0])*(x-edge[i][2])<0 and (y-edge[i][1])*(y-edge[i][3])<0: #邊的兩點和交點是反向，則真的有交到
+            edge_intersection.append((x,y))
+    # print("edge intersection=",edge_intersection)
+
+    #印出第一條hyperplane
+    index=0
+    temp=600
+    for i in range(len(edge_intersection)):
+        if edge_intersection[i][1]>0 and edge_intersection[i][1]<temp:
+            temp=edge_intersection[i][1]
+            index=i
+    # print((xi,yi),(edge_intersection[index][0],edge_intersection[index][1]))
+    cv.create_line(xi,yi,edge_intersection[index][0],edge_intersection[index][1],fill="green")
+
+    p1x,p1y=xi,yi
+    p2x,p2y=edge_intersection[index][0],edge_intersection[index][1]
+    
     
 
 
+    
 
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
 cv.pack(anchor='nw')
 
-
 #clear按鈕
 clear_button = tk.Button(text="clear",command=clear)
 clear_button.pack(side="left")
-
 
 #點擊滑鼠
 cv.bind("<Button-1>" , click)
@@ -706,7 +732,6 @@ print_button.pack(side="left")
 #全部算完，再靠continue button下一步
 step_button = tk.Button(text="start",command=next_step)
 step_button.pack(side="left")
-
 
 #Step by step
 var = tk.IntVar()
