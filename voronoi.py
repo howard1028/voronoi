@@ -99,7 +99,7 @@ def GetIntersectPointofLines(x1,y1,x2,y2,x3,y3,x4,y4):
 #兩線交點by方程式
 def intersection(A1,B1,C1,A2,B2,C2):
     if A1*B2==A2*B1:
-        return float('inf'),float('inf')
+        return 100000,100000
     else:
         x,y = (C2*B1-C1*B2)/(A1*B2-A2*B1),(C1*A2-C2*A1)/(A1*B2-A2*B1)
         return x,y
@@ -498,6 +498,7 @@ def next_step():
 
 
 
+
 #divide成左右兩邊
 def divide(temp_list):
     left_temp=[] 
@@ -654,9 +655,11 @@ def clockwise(p0, p1, p2):
     else:
         return 0
 
+#顯示滑鼠指到的點
 def printxy(event):
     label_xy.configure(text = f'(x, y): ({event.x}, {event.y})')
 
+#畫hyperplane
 def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     edge_equation=[]
     edge_equation.clear()
@@ -665,7 +668,8 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     edge_inter2=[] #存一次全部交點
     edge_inter2.clear()
     edge_inter3=[] #存全部交點
-    # edge_inter3.clear()
+    
+    new_edge=edge
     to_print=[]
 
     A,B,C=medLine(x1,y1,x2,y2) #上切線的垂直線一般式
@@ -754,7 +758,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             edge_inter2[i] = list(map(int,edge_inter2[i]))
         for i in range(len(edge_intersection)):
             edge_intersection[i] = list(map(int,edge_intersection[i]))
-        #印出第一條hyperplane
+
         last_index=index
         index=0
         temp=100000
@@ -771,19 +775,19 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
         if count==0:
             print("if")
             Ad,Bd,Cd=medLine(x3,y3,x4,y4) #下切線的垂直線一般式
-            xd,yd=intersection(Ad,Bd,Cd,0,1,-100000) #和邊界的交點
-            cv.create_line(xd,yd,edge_inter2[last_index][0],edge_inter2[last_index][1],fill="red")
-            edge_inter3.append((edge_inter2[last_index][0],edge_inter2[last_index][1]))
+            xd,yd=intersection(Ad,Bd,Cd,0,1,-600) #和邊界的交點
+            print("xd,yd=",xd,yd,edge_inter3[-1][0],edge_inter3[-1][1])
+            cv.create_line(xd,yd,edge_inter3[-1][0],edge_inter3[-1][1],fill="red")
+            edge_inter3.append((edge_inter3[-1][0],edge_inter3[-1][1]))
             edge_inter3.append((xd,yd))
 
-            print("top=",(edge_inter2[last_index][0],edge_inter2[last_index][1]))
+            print("top=",(edge_inter3[-1][0],edge_inter3[-1][1]))
             
-            cv.create_line(p2x,p2y,edge_inter2[last_index][0],edge_inter2[last_index][1],fill="red")
+            cv.create_line(p2x,p2y,edge_inter3[-1][0],edge_inter3[-1][1],fill="red")
             continue_button.wait_variable(var) #wait
             break
 
         else:
-            
             print("top=",(edge_inter2[index][0],edge_inter2[index][1]))
             
             p1x,p1y = p2x,p2y
@@ -791,7 +795,6 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             cv.create_line(p1x,p1y,p2x,p2y,fill="red")
             edge_inter3.append((edge_inter2[index][0],edge_inter2[index][1]))
             
-
 
             # new_e:下一個要畫中垂線的兩點
             if edge[index][4]-new_e[0]<0.05 and edge[index][5]-new_e[1]<0.05:
@@ -809,74 +812,22 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
             print("new_2=",new_e)
             continue_button.wait_variable(var) #wait
-
-
-    # print("\n")
-    # #3
-    # edge_equation.clear()
-    # edge_intersection.clear() 
-    # edge_inter2.clear()
-
-    # #存edge方程式
-    # for i in range(len(edge)):
-    #     A1,B1,C1=GeneralEquation(edge[i][0],edge[i][1],edge[i][2],edge[i][3])
-    #     edge_equation.append((A1,B1,C1))
-    # #存edge交點，並判斷是在線段上還是線段延伸上
-    # for i in range(len(edge)):
-    #     x,y=intersection(A,B,C,edge_equation[i][0],edge_equation[i][1],edge_equation[i][2])
-    #     edge_inter2.append((x,y))
-    #     if (x-edge[i][0])*(x-edge[i][2])<0 and (y-edge[i][1])*(y-edge[i][3])<0: #邊的兩點和交點是反向，則真的有交到
-    #         edge_intersection.append((x,y))
-    # for i in range(len(edge_inter2)):
-    #     edge_inter2[i] = list(map(int,edge_inter2[i]))
-    # for i in range(len(edge_intersection)):
-    #     edge_intersection[i] = list(map(int,edge_intersection[i]))
-    # #印出第一條hyperplane
-    # last_index=index
-    # index=0
-    # temp=100000
-    # count=0
-    # #找最上面交點的index
-    # for i in range(len(edge_intersection)):
-    #     if edge_intersection[i][1]>p2y and edge_intersection[i][1]<temp:
-    #         temp=edge_intersection[i][1]
-    #         count+=1
-    #         for j in range(len(edge_inter2)):
-    #             if edge_inter2[j]==edge_intersection[i]:
-    #                 index=j
-    # if count==0:
-    #     print("if")
-    #     Ad,Bd,Cd=medLine(x3,y3,x4,y4) #下切線的垂直線一般式
-    #     xd,yd=intersection(Ad,Bd,Cd,0,1,-100000) #和邊界的交點
-    #     cv.create_line(xd,yd,edge_inter2[last_index][0],edge_inter2[last_index][1],fill="red")
-    #     edge_inter3.append((edge_inter2[last_index][0],edge_inter2[last_index][1]))
-    #     edge_inter3.append((xd,yd))
-
-    #     print("top=",(edge_inter2[last_index][0],edge_inter2[last_index][1]))
-        
-    #     cv.create_line(p2x,p2y,edge_inter2[last_index][0],edge_inter2[last_index][1],fill="red")
-    #     continue_button.wait_variable(var) #wait
-
-    # else:
-        
-    #     print("top=",(edge_inter2[index][0],edge_inter2[index][1]))
-        
-    #     p1x,p1y = p2x,p2y
-    #     p2x,p2y = edge_inter2[index][0],edge_inter2[index][1]
-    #     cv.create_line(p1x,p1y,p2x,p2y,fill="red")
-    #     edge_inter3.append((edge_inter2[index][0],edge_inter2[index][1]))
-
-
-
-
     
+
+
     # for i in range(len(edge_inter3)-1):
-    #     print("edge_inter3=",edge_inter3)
-    #     cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="green")
+    #     cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="yellow")
+    # edge_inter3.clear()
+
+    #消線
+
+
 
 
     
-
+#消hyperplane
+def del_hyperplane():
+    pass
 
 cv = tk.Canvas(window,bg='white',height=600,width=600,relief=RIDGE)
 cv.pack(anchor='nw')
