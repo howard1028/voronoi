@@ -456,6 +456,12 @@ def draw_Convexhull(temp_list):
 def print_data():
     cv.delete("all")
     data_dot.clear()
+
+    edge.clear()
+    edge2.clear()
+    left.clear()
+    right.clear()
+
     global index
     if (dot_list2[index]!=0):
         if(index!=0):
@@ -487,13 +493,14 @@ def next_step():
         continue_button.wait_variable(var) #wait
 
         UL,UR,DL,DR=tangent_line(left,right)
-        cv.create_line(UL[0],UL[1],UR[0],UR[1],fill="green") 
+        cv.create_line(UL[0],UL[1],UR[0],UR[1],fill="green",tags="CH") 
         print("upperbound=",UL,UR)
-        cv.create_line(DL[0],DL[1],DR[0],DR[1],fill="green") 
+        cv.create_line(DL[0],DL[1],DR[0],DR[1],fill="green",tags="CH") 
         print("lowerbound=",DL,DR)
 
         # draw_Convexhull(left+right)
         hyperplane(UL[0],UL[1],UR[0],UR[1],DL[0],DL[1],DR[0],DR[1])
+        
 
 
 
@@ -691,7 +698,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     for i in range(len(edge)):
         x,y=intersection(A,B,C,edge_equation[i][0],edge_equation[i][1],edge_equation[i][2])
         edge_inter2.append((x,y))
-        if (x-edge[i][0])*(x-edge[i][2])<0 and (y-edge[i][1])*(y-edge[i][3])<0: #邊的兩點和交點是反向，則真的有交到
+        if (x-edge[i][0])*(x-edge[i][2])<0 and (y-edge[i][1])*(y-edge[i][3])<0 : #邊的兩點和交點是反向，則真的有交到
             edge_intersection.append((x,y))
     for i in range(len(edge_inter2)):
         edge_inter2[i] = list(map(int,edge_inter2[i]))
@@ -765,20 +772,19 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
         count=0
         #找最上面交點的index
         for i in range(len(edge_intersection)):
-            if edge_intersection[i][1]>p2y and edge_intersection[i][1]<temp:
+            if edge_intersection[i][1]>p2y and edge_intersection[i][1]<temp and edge_intersection[i][1]-p2y>1:
                 temp=edge_intersection[i][1]
                 count+=1
                 for j in range(len(edge_inter2)):
                     if edge_inter2[j]==edge_intersection[i]:
                         index=j
-
-        if count==0:
+        
+        if count==0: #最後一輪
             print("if")
             Ad,Bd,Cd=medLine(x3,y3,x4,y4) #下切線的垂直線一般式
             xd,yd=intersection(Ad,Bd,Cd,0,1,-600) #和邊界的交點
             print("xd,yd=",xd,yd,edge_inter3[-1][0],edge_inter3[-1][1])
             cv.create_line(xd,yd,edge_inter3[-1][0],edge_inter3[-1][1],fill="red")
-            edge_inter3.append((edge_inter3[-1][0],edge_inter3[-1][1]))
             edge_inter3.append((xd,yd))
 
             print("top=",(edge_inter3[-1][0],edge_inter3[-1][1]))
@@ -814,7 +820,8 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             continue_button.wait_variable(var) #wait
     
 
-
+    print("edge_inter3=",edge_inter3)
+    cv.delete("CH")
     # for i in range(len(edge_inter3)-1):
     #     cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="yellow")
     # edge_inter3.clear()
@@ -840,8 +847,8 @@ clear_button.pack(side="left")
 cv.bind("<Button-1>" , click)
 
 #run按鈕
-run_button = tk.Button(text="draw",command=draw_line)
-run_button.pack(side="left")
+# run_button = tk.Button(text="draw",command=draw_line)
+# run_button.pack(side="left")
 
 #讀檔
 read_button = tk.Button(text="read data",command=read_data)
