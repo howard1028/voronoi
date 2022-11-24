@@ -1,4 +1,4 @@
- #      $LAN=python$ 
+ # $LAN=python$ 
  # M103040072 吳浩宇 Howard Wu
  # https://github.com/howard1028/voronoi_diagram
 
@@ -119,34 +119,34 @@ def draw_medLine(x1,y1,x2,y2):
         A1,B1,C1=medLine(x1,y1,x2,y2)
         A2,B2,C2=1,0,0
         xb1,yb1 = intersection(A1,B1,C1,A2,B2,C2)
-        cv.create_line(x_mid,y_mid,xb1,yb1)
+        cv.create_line(x_mid,y_mid,xb1,yb1,tags="V")
 
         A2,B2,C2=0,1,0
         xb2,yb2 = intersection(A1,B1,C1,A2,B2,C2)
-        cv.create_line(x_mid,y_mid,xb2,yb2)
+        cv.create_line(x_mid,y_mid,xb2,yb2,tags="V")
         edge.append((xb1,yb1,xb2,yb2,x1,y1,x2,y2))
 
     elif ((x1>x2 and y1<y2) or (x1<x2 and y1>y2)): #左下右上
         A1,B1,C1=medLine(x1,y1,x2,y2)
         A2,B2,C2=1,0,0
         xb1,yb1 = intersection(A1,B1,C1,A2,B2,C2)
-        cv.create_line(x_mid,y_mid,xb1,yb1)
+        cv.create_line(x_mid,y_mid,xb1,yb1,tags="V")
 
         A2,B2,C2=0,1,-600
         xb2,yb2 = intersection(A1,B1,C1,A2,B2,C2)
-        cv.create_line(x_mid,y_mid,xb2,yb2)
+        cv.create_line(x_mid,y_mid,xb2,yb2,tags="V")
         edge.append((xb1,yb1,xb2,yb2,x1,y1,x2,y2))
 
     elif ((x1>x2 and y1==y2) or (x1<x2 and y1==y2)): #同一橫線
 
-        cv.create_line(x_mid,y_mid,x_mid,0)
-        cv.create_line(x_mid,y_mid,x_mid,600)
+        cv.create_line(x_mid,y_mid,x_mid,0,tags="V")
+        cv.create_line(x_mid,y_mid,x_mid,600,tags="V")
         edge.append((x_mid,0,x_mid,600,x1,y1,x2,y2))
 
     elif ((x1==x2 and y1>y2) or (x1==x2 and y1<y2)): #同一直線
 
-        cv.create_line(x_mid,y_mid,0,y_mid)
-        cv.create_line(x_mid,y_mid,600,y_mid)
+        cv.create_line(x_mid,y_mid,0,y_mid,tags="V")
+        cv.create_line(x_mid,y_mid,600,y_mid,tags="V")
         edge.append((0,y_mid,600,y_mid,x1,y1,x2,y2))
 
 
@@ -177,24 +177,24 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
 
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
             else:   #外心在線上
                 if(which_side(x3,y3,x2,y2,x1,y1)*which_side(x3,y3,x2,y2,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x2,y2,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x2,y2,x3,y3))
 
 
@@ -211,24 +211,24 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
 
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
             else:   #外心在線上
                 if(which_side(x3,y3,x1,y1,x2,y2)*which_side(x3,y3,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x3,y3))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x3,y3))
 
 
@@ -245,25 +245,25 @@ def draw_medLine2(x1,y1,x2,y2,x3,y3):
 
             if((x-x_mid)*(xb1-x_mid)>0 or (y-y_mid)*(yb1-y_mid)>0): #中點到外心和中點到左上交點同向
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
                 else:   
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
             elif ((x-x_mid)*(xb1-x_mid)<0 or (y-y_mid)*(yb1-y_mid)<0):   #反向
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,x,y)>0): #外心和點在同一側
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
             else:   #外心在線上
                 
                 if(which_side(x2,y2,x1,y1,x3,y3)*which_side(x2,y2,x1,y1,xb2,yb2)>0): #點和右下交點在同側，則畫另一邊
-                    cv.create_line(x,y,xb1,yb1)
+                    cv.create_line(x,y,xb1,yb1,tags="V")
                     edge.append((x,y,xb1,yb1,x1,y1,x2,y2))
                 else:   
-                    cv.create_line(x,y,xb2,yb2)
+                    cv.create_line(x,y,xb2,yb2,tags="V")
                     edge.append((x,y,xb2,yb2,x1,y1,x2,y2))
 
 
@@ -675,6 +675,9 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     edge_inter2=[] #存一次全部交點
     edge_inter2.clear()
     edge_inter3=[] #存全部交點
+
+    edge_index=[] #存交點voronoi diagram邊的index
+    edge_index.clear()
     
     new_edge=edge
     to_print=[]
@@ -716,10 +719,12 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             for j in range(len(edge_inter2)):
                 if edge_inter2[j]==edge_intersection[i]:
                     index=j
+    
     print("top=",(edge_inter2[index][0],edge_inter2[index][1]))
     p1x,p1y,p2x,p2y = xi,yi,edge_inter2[index][0],edge_inter2[index][1]
     cv.create_line(p1x,p1y,p2x,p2y,fill="red")
     edge_inter3.append((xi,yi))
+    edge_index.append(index)
     edge_inter3.append((edge_inter2[index][0],edge_inter2[index][1]))
 
 
@@ -799,6 +804,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             p1x,p1y = p2x,p2y
             p2x,p2y = edge_inter2[index][0],edge_inter2[index][1]
             cv.create_line(p1x,p1y,p2x,p2y,fill="red")
+            edge_index.append(index)
             edge_inter3.append((edge_inter2[index][0],edge_inter2[index][1]))
             
 
@@ -822,6 +828,46 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
 
     print("edge_inter3=",edge_inter3)
     cv.delete("CH")
+
+    continue_button.wait_variable(var) #wait
+    cv.delete("V")
+
+    # continue_button.wait_variable(var) #wait
+    # for i in range(len(new_edge)):
+    #     cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
+
+    print("edge_index=",edge_index)
+    print("new_edge=",new_edge)
+
+    for i in range(len(edge_inter3)-2):
+        p1=(new_edge[edge_index[i]][0],new_edge[edge_index[i]][1])
+        print("p1=",p1)
+        p2=(new_edge[edge_index[i]][2],new_edge[edge_index[i]][3])
+        print("p2=",p2)
+
+        if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p1) >0:
+            print("clear left")
+            new_edge.append((new_edge[edge_index[i]][2],new_edge[edge_index[i]][3],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
+            print("new_edge=",new_edge)
+
+            new_edge.pop(edge_index[i])
+            
+            # cv.delete("V")
+        if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p2) >0:
+            print("clear right")
+            new_edge.append((new_edge[edge_index[i]][0],new_edge[edge_index[i]][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
+            print("new_edge=",new_edge)
+
+            new_edge.pop(edge_index[i])
+            
+            # cv.delete("V")
+
+    for i in range(len(new_edge)):
+        cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
+    print("new_edge=",new_edge)
+
+
+    # cv.delete("CH")
     # for i in range(len(edge_inter3)-1):
     #     cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="yellow")
     # edge_inter3.clear()
