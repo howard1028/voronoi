@@ -861,6 +861,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
+    
 
     for i in range(len(new_edge)):
         cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
