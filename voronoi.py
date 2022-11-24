@@ -847,18 +847,18 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
 
         if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p1) >0:
             print("clear left")
-            new_edge.append((new_edge[edge_index[i]][2],new_edge[edge_index[i]][3],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
+            new_edge.insert(edge_index[i],(new_edge[edge_index[i]][2],new_edge[edge_index[i]][3],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
             print("new_edge=",new_edge)
 
-            new_edge.pop(edge_index[i])
+            new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
         if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p2) >0:
             print("clear right")
-            new_edge.append((new_edge[edge_index[i]][0],new_edge[edge_index[i]][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
+            new_edge.insert(edge_index[i],(new_edge[edge_index[i]][0],new_edge[edge_index[i]][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
             print("new_edge=",new_edge)
 
-            new_edge.pop(edge_index[i])
+            new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
 
