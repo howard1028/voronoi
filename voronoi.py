@@ -732,16 +732,16 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     print("edge[index]=",edge[index])
     
     # #new_e:下一個要畫中垂線的兩點
-    if edge[index][4]-x1<0.05 and edge[index][5]-y1<0.05:
+    if edge[index][4]==x1 and edge[index][5]==y1:
         new_e=(x2,y2,edge[index][6],edge[index][7])
 
-    elif edge[index][4]-x2<0.05 and edge[index][5]-y2<0.05:
+    elif edge[index][4]==x2 and edge[index][5]==y2:
         new_e=(x1,y1,edge[index][6],edge[index][7])
         
-    elif edge[index][6]-x1<0.05 and edge[index][7]-y1<0.05:
+    elif edge[index][6]==x1 and edge[index][7]==y1:
         new_e=(x2,y2,edge[index][4],edge[index][5])
 
-    elif edge[index][6]-x2<0.05 and edge[index][7]-y2<0.05:
+    elif edge[index][6]==x2 and edge[index][7]==y2:
         new_e=(x1,y1,edge[index][4],edge[index][5])
         
     A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
@@ -809,16 +809,16 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             
 
             # new_e:下一個要畫中垂線的兩點
-            if edge[index][4]-new_e[0]<0.05 and edge[index][5]-new_e[1]<0.05:
+            if edge[index][4]==new_e[0] and edge[index][5]==new_e[1]:
                 new_e=(new_e[2],new_e[3],edge[index][6],edge[index][7])
 
-            elif edge[index][4]-new_e[2]<0.05 and edge[index][5]-new_e[3]<0.05:
+            elif edge[index][4]==new_e[2] and edge[index][5]==new_e[3]:
                 new_e=(new_e[0],new_e[1],edge[index][6],edge[index][7])
 
-            elif edge[index][6]-new_e[0]<0.05 and edge[index][7]-new_e[1]<0.05:
+            elif edge[index][6]==new_e[0] and edge[index][7]==new_e[1]:
                 new_e=(new_e[2],new_e[3],edge[index][4],edge[index][5])
 
-            elif edge[index][6]-new_e[2]<0.05 and edge[index][7]-new_e[3]<0.05:
+            elif edge[index][6]==new_e[2] and edge[index][7]==new_e[3]:
                 new_e=(new_e[0],new_e[1],edge[index][4],edge[index][5])
                 
             A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
@@ -861,7 +861,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
-    
+
 
     for i in range(len(new_edge)):
         cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
