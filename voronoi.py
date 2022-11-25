@@ -509,8 +509,11 @@ def next_step():
 #divide成左右兩邊
 def divide(temp_list):
     left_temp=[] 
+    left_temp.clear()
     right_temp=[]
+    right_temp.clear()
     all=[] #記每次left+right
+    all.clear()
     global left
     global right
 
@@ -680,7 +683,6 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     edge_index.clear()
     
     new_edge=edge
-    to_print=[]
 
     A,B,C=medLine(x1,y1,x2,y2) #上切線的垂直線一般式
     xi,yi=intersection(A,B,C,0,1,100000) #和邊界的交點
@@ -825,7 +827,7 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
             print("new_2=",new_e)
             continue_button.wait_variable(var) #wait
     
-
+    #消線
     print("edge_inter3=",edge_inter3)
     cv.delete("CH")
 
@@ -846,26 +848,63 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
         print("p2=",p2)
 
         if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p1) >0:
-            print("clear left")
-            new_edge.insert(edge_index[i],(new_edge[edge_index[i]][2],new_edge[edge_index[i]][3],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
-            print("new_edge=",new_edge)
+            # print("clear left")
+            new_edge.insert(edge_index[i],[new_edge[edge_index[i]][2],new_edge[edge_index[i]][3],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0])
+            # print("new_edge=",new_edge)
 
             new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
         if clockwise(edge_inter3[i],edge_inter3[i+1],edge_inter3[i+2]) * clockwise(edge_inter3[i],edge_inter3[i+1],p2) >0:
-            print("clear right")
-            new_edge.insert(edge_index[i],(new_edge[edge_index[i]][0],new_edge[edge_index[i]][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0))
-            print("new_edge=",new_edge)
+            # print("clear right")
+            new_edge.insert(edge_index[i],[new_edge[edge_index[i]][0],new_edge[edge_index[i]][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0])
+            # print("new_edge=",new_edge)
 
             new_edge.pop(edge_index[i]+1)
             
             # cv.delete("V")
+            
+
+    for i in range(len(edge_inter3)-1):
+        new_edge.append([edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],0,0,0,0])
 
 
+    flag=[]
     for i in range(len(new_edge)):
-        cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
+        flag.append(0)
+        
+    for i in range(len(new_edge)):
+        for j in range(i+1,len(new_edge),1):
+            if (new_edge[i][4]==0) and (new_edge[i][5]==0) and (new_edge[i][6]==0) and (new_edge[i][7]==0): #要的邊
+                flag[i]=1
+            else:
+                if (new_edge[i][0],new_edge[i][1]) == (new_edge[j][0],new_edge[j][1]) or (new_edge[i][2],new_edge[i][3]) == (new_edge[j][0],new_edge[j][1]) or  (new_edge[i][0],new_edge[i][1]) == (new_edge[j][2],new_edge[j][3]) or (new_edge[i][2],new_edge[i][3]) == (new_edge[j][2],new_edge[j][3]):
+                    print("ok\n")
+                    flag[i]=1
+
+    if (new_edge[i][4]==0) and (new_edge[i][5]==0) and (new_edge[i][6]==0) and (new_edge[i][7]==0): #要的邊
+            flag[i]=1
+    else:
+        if (new_edge[i][0],new_edge[i][1]) == (new_edge[-1][0],new_edge[-1][1]) or (new_edge[i][2],new_edge[i][3]) == (new_edge[-1][0],new_edge[-1][1]) or  (new_edge[i][0],new_edge[i][1]) == (new_edge[-1][2],new_edge[-1][3]) or (new_edge[i][2],new_edge[i][3]) == (new_edge[-1][2],new_edge[-1][3]):
+            print("ok\n")
+            flag[i]=1
+
+                
+
+
+
+    print("flag=",flag)
+        # if flag==0:
+        #     new_edge.pop(i)
+        #     break
+
+    #印出新的voronoi diagram
+    for i in range(len(new_edge)):
+        if flag[i]==1:
+            cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
     print("new_edge=",new_edge)
+    print("edge_inter3=",edge_inter3)
+    
 
 
     # cv.delete("CH")
@@ -873,8 +912,8 @@ def hyperplane(x1,y1,x2,y2,x3,y3,x4,y4):
     #     cv.create_line(edge_inter3[i][0],edge_inter3[i][1],edge_inter3[i+1][0],edge_inter3[i+1][1],fill="yellow")
     # edge_inter3.clear()
 
-    #消線
-
+    print("new_edge=",new_edge)
+    print("edge_inter3=",edge_inter3)
 
 
 

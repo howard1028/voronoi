@@ -1,4 +1,4 @@
-#  # $LAN=python$ 
+# #  # $LAN=python$ 
 #  # M103040072 吳浩宇 Howard Wu
 #  # https://github.com/howard1028/voronoi_diagram
 
@@ -732,16 +732,16 @@
 #     print("edge[index]=",edge[index])
     
 #     # #new_e:下一個要畫中垂線的兩點
-#     if edge[index][4]-x1<0.05 and edge[index][5]-y1<0.05:
+#     if edge[index][4]==x1 and edge[index][5]==y1:
 #         new_e=(x2,y2,edge[index][6],edge[index][7])
 
-#     elif edge[index][4]-x2<0.05 and edge[index][5]-y2<0.05:
+#     elif edge[index][4]==x2 and edge[index][5]==y2:
 #         new_e=(x1,y1,edge[index][6],edge[index][7])
         
-#     elif edge[index][6]-x1<0.05 and edge[index][7]-y1<0.05:
+#     elif edge[index][6]==x1 and edge[index][7]==y1:
 #         new_e=(x2,y2,edge[index][4],edge[index][5])
 
-#     elif edge[index][6]-x2<0.05 and edge[index][7]-y2<0.05:
+#     elif edge[index][6]==x2 and edge[index][7]==y2:
 #         new_e=(x1,y1,edge[index][4],edge[index][5])
         
 #     A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
@@ -809,16 +809,16 @@
             
 
 #             # new_e:下一個要畫中垂線的兩點
-#             if edge[index][4]-new_e[0]<0.05 and edge[index][5]-new_e[1]<0.05:
+#             if edge[index][4]==new_e[0] and edge[index][5]==new_e[1]:
 #                 new_e=(new_e[2],new_e[3],edge[index][6],edge[index][7])
 
-#             elif edge[index][4]-new_e[2]<0.05 and edge[index][5]-new_e[3]<0.05:
+#             elif edge[index][4]==new_e[2] and edge[index][5]==new_e[3]:
 #                 new_e=(new_e[0],new_e[1],edge[index][6],edge[index][7])
 
-#             elif edge[index][6]-new_e[0]<0.05 and edge[index][7]-new_e[1]<0.05:
+#             elif edge[index][6]==new_e[0] and edge[index][7]==new_e[1]:
 #                 new_e=(new_e[2],new_e[3],edge[index][4],edge[index][5])
 
-#             elif edge[index][6]-new_e[2]<0.05 and edge[index][7]-new_e[3]<0.05:
+#             elif edge[index][6]==new_e[2] and edge[index][7]==new_e[3]:
 #                 new_e=(new_e[0],new_e[1],edge[index][4],edge[index][5])
                 
 #             A,B,C=medLine(new_e[0],new_e[1],new_e[2],new_e[3])
@@ -861,7 +861,7 @@
 #             new_edge.pop(edge_index[i]+1)
             
 #             # cv.delete("V")
-    
+
 
 #     for i in range(len(new_edge)):
 #         cv.create_line(new_edge[i][0],new_edge[i][1],new_edge[i][2],new_edge[i][3])
@@ -950,10 +950,29 @@
 # #https://web.ntnu.edu.tw/~algo/ConvexHull.html
 # #https://blog.csdn.net/python1639er/article/details/115386039
 
-new_edge= [[275, 313, 600, 390, 196, 438, 260, 167], [275, 313, 0, 22, 130, 290, 260, 167], [275, 313, 0, 436, 130, 290, 196, 438], [0, 442, 1160, 0, 374, 225, 424, 356]]
-new_edge.pop(0)
+new_edge= [[255, 276, 600, 264, 219, 127, 230, 429], [0, 499, 250, 279, 0, 0, 0, 0], [255, 276, 0, 499, 101, 281, 230, 429], [0, 81, 250, 272, 0, 0, 0, 0], [536, 297, 600, 308, 481, 424, 526, 160], [536, 297, 374, 122, 0, 0, 0, 0], [536, 297, 0, 591, 400, 276, 481, 424]]
 print(new_edge)
+edge_inter3= [(11137.110749185667, -100000.0), (374, 122), (250, 272), (250, 279), (354, 396), (358.9561752988048, 600.0)]
 
+            
+flag=[]
+for i in range(len(new_edge)):
+    flag.append(0)
+
+print("flag=",flag)
+print("new_edge=",new_edge)
+
+
+for i in range(len(new_edge)-1,-1,-1):
+    for j in range(len(edge_inter3)):
+        print(new_edge[i])
+        if (new_edge[i][4]!=0) and (new_edge[i][5]!=0) and (new_edge[i][6]!=0) and (new_edge[i][7]!=0):
+            if (new_edge[i][0],new_edge[i][1]) == (edge_inter3[j][0],edge_inter3[j][1]) or (new_edge[i][2],new_edge[i][3]) == (edge_inter3[j][0],edge_inter3[j][1]):
+                new_edge[flag[i]]=1
+        else:
+            new_edge[i][flag[i]]=1
+
+print("new_edge=",new_edge)
 
 def delete_nolink_line(lineset):
     ans=[]
@@ -981,6 +1000,7 @@ def delete_nolink_line(lineset):
            continue
     return ans
 
-print(delete_nolink_line(new_edge))
+# print(delete_nolink_line(new_edge))
+
 
 
